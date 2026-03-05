@@ -45,7 +45,7 @@ public class GoreSceptre : ModItem
     }
     public override void AddRecipes()
     {
-        CreateRecipe().AddIngredient(ItemID.CrimsonHeart).AddIngredient(ItemID.CrimtaneBar, 35).AddTile(TileID.Anvils).Register();
+        CreateRecipe().AddIngredient(ItemID.Vertebrae, 25).AddIngredient(ItemID.CrimtaneBar, 5).AddTile(TileID.Anvils).Register();
     }
 }
 public class GoreBeam : ModProjectile

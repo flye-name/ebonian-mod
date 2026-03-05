@@ -31,7 +31,7 @@ public class GutlingGun : ModItem
     }
     public override void AddRecipes()
     {
-        CreateRecipe().AddIngredient(ItemID.IllegalGunParts).AddIngredient(ItemID.Ichor).AddIngredient(ItemID.SoulofFright, 15).AddIngredient(ItemType<CecitiorMaterial>(), 20).AddTile(TileID.MythrilAnvil).Register();
+        CreateRecipe().AddIngredient(ItemID.IllegalGunParts).AddIngredient(ItemID.Ichor, 5).AddIngredient(ItemID.SoulofFright, 15).AddIngredient(ItemType<CecitiorMaterial>(), 20).AddTile(TileID.MythrilAnvil).Register();
     }
     public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
     {

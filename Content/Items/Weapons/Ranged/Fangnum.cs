@@ -37,7 +37,7 @@ public class Fangnum : ModItem
     }
     public override void AddRecipes()
     {
-        CreateRecipe().AddIngredient(ItemID.TheUndertaker).AddIngredient(ItemID.TissueSample, 20).AddIngredient(ItemID.Vertebrae, 15).AddTile(TileID.Anvils).Register();
+        CreateRecipe().AddIngredient(ItemID.TheUndertaker).AddIngredient(ItemID.TissueSample, 20).AddIngredient(ItemID.Vertebrae, 15).AddTile(TileID.DemonAltar).Register();
     }
     public override bool CanConsumeAmmo(Item ammo, Player player) => false;
 }

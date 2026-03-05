@@ -46,6 +46,6 @@ internal class TitteringStaff : ModItem
 
     public override void AddRecipes()
     {
-        CreateRecipe().AddIngredient(ItemID.CursedFlames, 15).AddIngredient(ItemType<CorruptEyeMaterial>(), 20).AddTile(TileID.MythrilAnvil).Register();
+        CreateRecipe().AddIngredient(ItemID.CursedFlame, 5).AddIngredient(ItemType<CorruptEyeMaterial>(), 20).AddTile(TileID.MythrilAnvil).Register();
     }
 }

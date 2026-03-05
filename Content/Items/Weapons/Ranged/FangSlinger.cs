@@ -10,7 +10,7 @@ public class FangSlinger : ModItem
         Item.width = 26;
         Item.height = 60;
         Item.crit = 10;
-        Item.damage = 23;
+        Item.damage = 18;
         Item.useAnimation = 40;
         Item.useTime = 40;
         Item.noUseGraphic = true;
@@ -28,10 +28,6 @@ public class FangSlinger : ModItem
     public override bool CanConsumeAmmo(Item ammo, Player player)
     {
         return false;
-    }
-    public override void AddRecipes()
-    {
-        CreateRecipe().AddIngredient(ItemID.ShadewoodBow).AddIngredient(ItemID.TissueSample, 20).AddTile(TileID.Anvils).Register();
     }
     public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
     {

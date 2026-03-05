@@ -1,4 +1,5 @@
-﻿using Terraria.GameContent.Bestiary;
+﻿using EbonianMod.Content.Items.Weapons.Ranged;
+using Terraria.GameContent.Bestiary;
 
 namespace EbonianMod.Content.NPCs.Crimson;
 
@@ -20,6 +21,7 @@ public class Screecher : ModNPC
     public override void ModifyNPCLoot(NPCLoot npcLoot)
     {
         npcLoot.Add(ItemDropRule.Common(ItemID.Vertebrae, 2, 1, 4));
+        npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<FangSlinger>(), 90));
     }
 
     public override float SpawnChance(NPCSpawnInfo spawnInfo)

@@ -36,7 +36,7 @@ public class Equilibrium : ModItem
     }
     public override void AddRecipes()
     {
-        CreateRecipe().AddIngredient(ItemType<Serration>()).AddIngredient(ItemType<MeatCrusher>()).AddIngredient(ItemID.BrokenHeroSword).AddTile(TileID.MythrilAnvil).Register();
+        CreateRecipe().AddIngredient(ItemType<Serration>()).AddIngredient(ItemType<MeatCrusher>()).AddIngredient(ItemID.BrokenHeroSword).AddTile(TileID.DemonAltar).Register();
     }
     public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
     {

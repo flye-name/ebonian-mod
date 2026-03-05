@@ -925,11 +925,11 @@ ItemName: {
 }
 
 CecitiorClawMaterial: {
-	// DisplayName: Cecitior Claw Material
+	// DisplayName: Loose Claw
 	// Tooltip: ""
 }
 
 CorruptEyeMaterial: {
-	// DisplayName: Corrupt Eye Material
+	// DisplayName: Infected Eye
 	// Tooltip: ""
 }
