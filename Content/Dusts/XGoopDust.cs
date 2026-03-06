@@ -58,6 +58,17 @@ public class XGoopDust2 : ModDust
             dust.active = false;
         return false;
     }
+    
+    public override bool PreDraw(Dust d)
+    {
+        XareusRendering.DrawCache.Add(() =>
+        {
+            Texture2D tex = Assets.Extras.Extras2.fire_01.Value;
+            Main.spriteBatch.Draw(tex, d.position - Main.screenPosition, null, (d.customData is null ? Color.White : d.color) * MathHelper.Clamp(d.scale * 2, 0, 0.5f), d.rotation, tex.Size() / 2, d.scale * 0.2f, SpriteEffects.None, 0);
+            Main.spriteBatch.Draw(tex, d.position - Main.screenPosition, null, (d.customData is null ? Color.White : d.color) * MathHelper.Clamp(d.scale * 2, 0, 0.5f), -d.rotation, tex.Size() / 2, d.scale * 0.2f, SpriteEffects.None, 0);
+        });
+        return false;
+    }
 }
 public class XGoopDustDark : ModDust
 {

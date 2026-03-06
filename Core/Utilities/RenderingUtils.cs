@@ -4,15 +4,6 @@ namespace EbonianMod.Core.Utilities;
 
 public class RenderingUtils
 {
-	public static void PreserveMainTarget(bool renderStored)
-	{
-		Main.graphics.GraphicsDevice.SetRenderTarget(renderStored ? Main.screenTarget : Main.screenTargetSwap);
-		Main.graphics.GraphicsDevice.Clear(Color.Transparent);
-		Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend);
-		Main.spriteBatch.Draw(renderStored ? Main.screenTargetSwap : Main.screenTarget, Vector2.Zero, Color.White);
-		Main.spriteBatch.End();
-	}
-	
 	public static void CreateRender(ref RenderTarget2D target)
 	{
 		if (target is not null)

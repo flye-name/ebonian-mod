@@ -19,7 +19,7 @@ public class BlurRendering : BaseCachedActionRenderTarget<BlurRendering>
 		Effects.Test2.Value.CurrentTechnique.Passes[0].Apply();
 		Effects.Test2.Value.Parameters["tex0"].SetValue(Targets[0]);
 		Effects.Test2.Value.Parameters["i"].SetValue(0.02f);
-		Main.spriteBatch.Draw(Main.screenTargetSwap, Vector2.Zero, Color.White);
+		Main.spriteBatch.Draw(Main.screenTarget, Vector2.Zero, Color.White);
 		Main.spriteBatch.End();
 	}
 }
