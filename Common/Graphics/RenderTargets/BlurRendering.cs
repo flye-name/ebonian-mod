@@ -1,4 +1,4 @@
-namespace EbonianMod.Common.Graphics.RenderTargets;
+/*namespace EbonianMod.Common.Graphics.RenderTargets;
 
 public class BlurRendering : BaseCachedActionRenderTarget<BlurRendering>
 {
@@ -22,4 +22,4 @@ public class BlurRendering : BaseCachedActionRenderTarget<BlurRendering>
 		Main.spriteBatch.Draw(Main.screenTarget, Vector2.Zero, Color.White);
 		Main.spriteBatch.End();
 	}
-}
+}*/ // Unused
