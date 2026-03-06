@@ -68,6 +68,41 @@ public class GarbageFlameDust : ModDust
         return false;
     }
 }
+
+public class ColoredFlameDust : ModDust
+{
+    public override string Texture => Helper.Empty;
+    public override void OnSpawn(Dust dust)
+    {
+        dust.alpha = 255;
+        dust.noLight = true;
+        dust.noGravity = true;
+        if (dust.scale > 0.25f)
+            dust.scale = 0.25f;
+        dust.customData = Main.rand.Next(1, 3);
+        base.OnSpawn(dust);
+
+    }
+    public override bool Update(Dust dust)
+    {
+        dust.position += dust.velocity;
+        dust.scale -= 0.003f;
+        dust.velocity *= 0.95f;
+        if (dust.scale <= 0)
+            dust.active = false;
+        return false;
+    }
+
+    public override bool PreDraw(Dust d)
+    {
+        Texture2D tex = Assets.Extras.Extras2.fire_01.Value;
+
+        Main.spriteBatch.Draw(tex, d.position - Main.screenPosition, null, d.color with { A = 0 } * (d.scale * 5), d.rotation, tex.Size() / 2, d.scale * 0.6f, SpriteEffects.None, 0);
+        Main.spriteBatch.Draw(tex, d.position - Main.screenPosition, null, Color.White with { A = 0 } * (d.scale * .1f), d.rotation, tex.Size() / 2, d.scale * 0.6f, SpriteEffects.None, 0);
+        return false;
+    }
+}
+
 public class SmokeDustAkaFireDustButNoGlow : ModDust
 {
     public override string Texture => Helper.Empty;

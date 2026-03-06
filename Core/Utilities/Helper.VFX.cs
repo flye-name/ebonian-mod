@@ -22,11 +22,11 @@ public static partial class Helper
     }
     public static void DustExplosion(Vector2 pos, Vector2 size = default, int type = 0, Color color = default, bool sound = true, bool smoke = true, float scaleFactor = 1, float increment = 0.125f, Vector2 _vel = default, float MinMulti = 1, float MaxMulti = 1)
     {
-        int dustType = DustType<Content.Dusts.GarbageFlameDust>();
+        int dustType = DustType<Content.Dusts.ColoredFlameDust>();
         switch (type)
         {
             case 0:
-                dustType = DustType<Content.Dusts.GarbageFlameDust>();
+                dustType = DustType<Content.Dusts.ColoredFlameDust>();
                 break;
             case 1:
                 dustType = DustType<Content.Dusts.FireDust>();
