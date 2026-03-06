@@ -46,8 +46,8 @@ internal class CecitiorClawSlash : ModProjectile
     {
         Texture2D tex = Assets.Extras.laser4.Value;
         float s = 0f;
-        List<VertexInfo2> vertices = new();
-        List<VertexInfo2> vertices2 = new();
+        List<VertexPositionColorTexture> vertices = new();
+        List<VertexPositionColorTexture> vertices2 = new();
 
         for (int i = 1; i < 100; i++)
         {
@@ -64,32 +64,31 @@ internal class CecitiorClawSlash : ModProjectile
             Vector2 end = lastPos - Main.screenPosition;
             float rot = Projectile.velocity.ToRotation();
             float y = MathHelper.Lerp(-2, 2, s);
-            vertices.Add(new VertexInfo2(start + new Vector2(2 + s * Projectile.scale * (105), y).RotatedBy(rot + MathHelper.PiOver2), new Vector3(s * 0.5f, 0, 0), Color.Maroon * alpha));
-            vertices.Add(new VertexInfo2(start + new Vector2(2 + s * Projectile.scale * (105), y).RotatedBy(rot - MathHelper.PiOver2), new Vector3(s * 0.5f, 1, 0), Color.Maroon * alpha));
+            vertices.Add(Helper.AsVertex(start + new Vector2(2 + s * Projectile.scale * (105), y).RotatedBy(rot + MathHelper.PiOver2), new Vector2(s * 0.5f, 0), Color.Maroon * alpha));
+            vertices.Add(Helper.AsVertex(start + new Vector2(2 + s * Projectile.scale * (105), y).RotatedBy(rot - MathHelper.PiOver2), new Vector2(s * 0.5f, 1), Color.Maroon * alpha));
 
-            vertices2.Add(new VertexInfo2(start + new Vector2(2 + s * Projectile.scale * (75) * 3.5f, y).RotatedBy(rot + MathHelper.PiOver2), new Vector3(s * 0.5f, 0, 0), Color.Black * alpha * .15f));
-            vertices2.Add(new VertexInfo2(start + new Vector2(2 + s * Projectile.scale * (75) * 3.5f, y).RotatedBy(rot - MathHelper.PiOver2), new Vector3(s * 0.5f, 1, 0), Color.Black * alpha * .15f));
+            vertices2.Add(Helper.AsVertex(start + new Vector2(2 + s * Projectile.scale * (75) * 3.5f, y).RotatedBy(rot + MathHelper.PiOver2), new Vector2(s * 0.5f, 0), Color.Black * alpha * .15f));
+            vertices2.Add(Helper.AsVertex(start + new Vector2(2 + s * Projectile.scale * (75) * 3.5f, y).RotatedBy(rot - MathHelper.PiOver2), new Vector2(s * 0.5f, 1), Color.Black * alpha * .15f));
 
             pos = Projectile.Center - Projectile.velocity * i * 2;
             start = pos - Main.screenPosition;
-            vertices.Add(new VertexInfo2(start + new Vector2(2 + s * Projectile.scale * (105), y).RotatedBy(rot + MathHelper.PiOver2), new Vector3(s * 0.5f, 0, 0), Color.Maroon * alpha));
-            vertices.Add(new VertexInfo2(start + new Vector2(2 + s * Projectile.scale * (105), y).RotatedBy(rot - MathHelper.PiOver2), new Vector3(s * 0.5f, 1, 0), Color.Maroon * alpha));
+            vertices.Add(Helper.AsVertex(start + new Vector2(2 + s * Projectile.scale * (105), y).RotatedBy(rot + MathHelper.PiOver2), new Vector2(s * 0.5f, 0), Color.Maroon * alpha));
+            vertices.Add(Helper.AsVertex(start + new Vector2(2 + s * Projectile.scale * (105), y).RotatedBy(rot - MathHelper.PiOver2), new Vector2(s * 0.5f, 1), Color.Maroon * alpha));
 
-            vertices2.Add(new VertexInfo2(start + new Vector2(2 + s * Projectile.scale * (75) * 3.5f, y).RotatedBy(rot + MathHelper.PiOver2), new Vector3(s * 0.5f, 0, 0), Color.Black * alpha * .15f));
-            vertices2.Add(new VertexInfo2(start + new Vector2(2 + s * Projectile.scale * (75) * 3.5f, y).RotatedBy(rot - MathHelper.PiOver2), new Vector3(s * 0.5f, 1, 0), Color.Black * alpha * .15f));
+            vertices2.Add(Helper.AsVertex(start + new Vector2(2 + s * Projectile.scale * (75) * 3.5f, y).RotatedBy(rot + MathHelper.PiOver2), new Vector2(s * 0.5f, 0), Color.Black * alpha * .15f));
+            vertices2.Add(Helper.AsVertex(start + new Vector2(2 + s * Projectile.scale * (75) * 3.5f, y).RotatedBy(rot - MathHelper.PiOver2), new Vector2(s * 0.5f, 1), Color.Black * alpha * .15f));
         }
         SpritebatchParameters sbParams = Main.spriteBatch.Snapshot();
         Main.spriteBatch.End();
         Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.AnisotropicClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
-        Main.graphics.GraphicsDevice.Textures[0] = tex;
         if (vertices.Count >= 3)
         {
-            Main.graphics.GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleStrip, vertices2.ToArray(), 0, vertices2.Count - 2);
+            Helper.DrawTexturedPrimitives(vertices2.ToArray(), PrimitiveType.TriangleStrip, tex);
 
             Main.spriteBatch.End();
             Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.AnisotropicClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
             for (int j = 0; j < 2; j++)
-                Main.graphics.GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleStrip, vertices.ToArray(), 0, vertices.Count - 2);
+                Helper.DrawTexturedPrimitives(vertices.ToArray(), PrimitiveType.TriangleStrip, tex);
 
         }
         Main.spriteBatch.ApplySaved(sbParams);
@@ -139,8 +138,8 @@ internal class ClawSlashGreen : ModProjectile
     {
         Texture2D tex = Assets.Extras.laser4.Value;
         float s = 0f;
-        List<VertexInfo2> vertices = new();
-        List<VertexInfo2> vertices2 = new();
+        List<VertexPositionColorTexture> vertices = new();
+        List<VertexPositionColorTexture> vertices2 = new();
 
         for (int i = 1; i < 100; i++)
         {
@@ -157,32 +156,31 @@ internal class ClawSlashGreen : ModProjectile
             Vector2 end = lastPos - Main.screenPosition;
             float rot = Projectile.velocity.ToRotation();
             float y = MathHelper.Lerp(-2, 2, s);
-            vertices.Add(new VertexInfo2(start + new Vector2(2 + s * Projectile.scale * (105), y).RotatedBy(rot + MathHelper.PiOver2), new Vector3(s * 0.5f, 0, 0), Color.LawnGreen * alpha));
-            vertices.Add(new VertexInfo2(start + new Vector2(2 + s * Projectile.scale * (105), y).RotatedBy(rot - MathHelper.PiOver2), new Vector3(s * 0.5f, 1, 0), Color.LawnGreen * alpha));
+            vertices.Add(Helper.AsVertex(start + new Vector2(2 + s * Projectile.scale * (105), y).RotatedBy(rot + MathHelper.PiOver2), new Vector2(s * 0.5f, 0), Color.LawnGreen * alpha));
+            vertices.Add(Helper.AsVertex(start + new Vector2(2 + s * Projectile.scale * (105), y).RotatedBy(rot - MathHelper.PiOver2), new Vector2(s * 0.5f, 1), Color.LawnGreen * alpha));
 
-            vertices2.Add(new VertexInfo2(start + new Vector2(2 + s * Projectile.scale * (75) * 3.5f, y).RotatedBy(rot + MathHelper.PiOver2), new Vector3(s * 0.5f, 0, 0), Color.Black * alpha * .15f));
-            vertices2.Add(new VertexInfo2(start + new Vector2(2 + s * Projectile.scale * (75) * 3.5f, y).RotatedBy(rot - MathHelper.PiOver2), new Vector3(s * 0.5f, 1, 0), Color.Black * alpha * .15f));
+            vertices2.Add(Helper.AsVertex(start + new Vector2(2 + s * Projectile.scale * (75) * 3.5f, y).RotatedBy(rot + MathHelper.PiOver2), new Vector2(s * 0.5f, 0), Color.Black * alpha * .15f));
+            vertices2.Add(Helper.AsVertex(start + new Vector2(2 + s * Projectile.scale * (75) * 3.5f, y).RotatedBy(rot - MathHelper.PiOver2), new Vector2(s * 0.5f, 1), Color.Black * alpha * .15f));
 
             pos = Projectile.Center - Projectile.velocity * i * 2;
             start = pos - Main.screenPosition;
-            vertices.Add(new VertexInfo2(start + new Vector2(2 + s * Projectile.scale * (105), y).RotatedBy(rot + MathHelper.PiOver2), new Vector3(s * 0.5f, 0, 0), Color.LawnGreen * alpha));
-            vertices.Add(new VertexInfo2(start + new Vector2(2 + s * Projectile.scale * (105), y).RotatedBy(rot - MathHelper.PiOver2), new Vector3(s * 0.5f, 1, 0), Color.LawnGreen * alpha));
+            vertices.Add(Helper.AsVertex(start + new Vector2(2 + s * Projectile.scale * (105), y).RotatedBy(rot + MathHelper.PiOver2), new Vector2(s * 0.5f, 0), Color.LawnGreen * alpha));
+            vertices.Add(Helper.AsVertex(start + new Vector2(2 + s * Projectile.scale * (105), y).RotatedBy(rot - MathHelper.PiOver2), new Vector2(s * 0.5f, 1), Color.LawnGreen * alpha));
 
-            vertices2.Add(new VertexInfo2(start + new Vector2(2 + s * Projectile.scale * (75) * 3.5f, y).RotatedBy(rot + MathHelper.PiOver2), new Vector3(s * 0.5f, 0, 0), Color.Black * alpha * .15f));
-            vertices2.Add(new VertexInfo2(start + new Vector2(2 + s * Projectile.scale * (75) * 3.5f, y).RotatedBy(rot - MathHelper.PiOver2), new Vector3(s * 0.5f, 1, 0), Color.Black * alpha * .15f));
+            vertices2.Add(Helper.AsVertex(start + new Vector2(2 + s * Projectile.scale * (75) * 3.5f, y).RotatedBy(rot + MathHelper.PiOver2), new Vector2(s * 0.5f, 0), Color.Black * alpha * .15f));
+            vertices2.Add(Helper.AsVertex(start + new Vector2(2 + s * Projectile.scale * (75) * 3.5f, y).RotatedBy(rot - MathHelper.PiOver2), new Vector2(s * 0.5f, 1), Color.Black * alpha * .15f));
         }
         SpritebatchParameters sbParams = Main.spriteBatch.Snapshot();
         Main.spriteBatch.End();
         Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.AnisotropicClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
-        Main.graphics.GraphicsDevice.Textures[0] = tex;
         if (vertices.Count >= 3)
         {
-            Main.graphics.GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleStrip, vertices2.ToArray(), 0, vertices2.Count - 2);
+            Helper.DrawTexturedPrimitives(vertices2.ToArray(), PrimitiveType.TriangleStrip, tex);
 
             Main.spriteBatch.End();
             Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.AnisotropicClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
             for (int j = 0; j < 2; j++)
-                Main.graphics.GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleStrip, vertices.ToArray(), 0, vertices.Count - 2);
+                Helper.DrawTexturedPrimitives(vertices.ToArray(), PrimitiveType.TriangleStrip, tex);
 
         }
         Main.spriteBatch.ApplySaved(sbParams);

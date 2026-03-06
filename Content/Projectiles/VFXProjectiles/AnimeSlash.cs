@@ -30,8 +30,8 @@ public class AnimeSlash : ModProjectile
     {
         Texture2D tex = Assets.Extras.laser2.Value;
         float s = 0f;
-        List<VertexInfo2> vertices = new();
-        List<VertexInfo2> vertices2 = new();
+        List<VertexPositionColorTexture> vertices = new();
+        List<VertexPositionColorTexture> vertices2 = new();
 
         if (oldPosSaved.Count > 1)
         {
@@ -50,23 +50,22 @@ public class AnimeSlash : ModProjectile
                 if (oldPosSaved.Count < 5)
                     rot = Projectile.velocity.ToRotation();
                 float y = MathHelper.Lerp(-5, 0, s);
-                vertices.Add(new VertexInfo2(start + new Vector2(2 + s * Projectile.scale * (oldPosSaved.Count + 5), y).RotatedBy(rot + MathHelper.PiOver2), new Vector3(s * 0.5f, 0, 0), Color.White * alpha * 3));
-                vertices.Add(new VertexInfo2(start + new Vector2(2 + s * Projectile.scale * (oldPosSaved.Count + 5), y).RotatedBy(rot - MathHelper.PiOver2), new Vector3(s * 0.5f, 1, 0), Color.White * alpha * 3));
+                vertices.Add(Helper.AsVertex(start + new Vector2(2 + s * Projectile.scale * (oldPosSaved.Count + 5), y).RotatedBy(rot + MathHelper.PiOver2), new Vector2(s * 0.5f, 0), Color.White * alpha * 3));
+                vertices.Add(Helper.AsVertex(start + new Vector2(2 + s * Projectile.scale * (oldPosSaved.Count + 5), y).RotatedBy(rot - MathHelper.PiOver2), new Vector2(s * 0.5f, 1), Color.White * alpha * 3));
 
-                vertices2.Add(new VertexInfo2(start + new Vector2(2 + s * Projectile.scale * (oldPosSaved.Count * 1.5f + 5) * 3.5f, y).RotatedBy(rot + MathHelper.PiOver2), new Vector3(s * 0.5f, 0, 0), Color.White * alpha * 1.75f));
-                vertices2.Add(new VertexInfo2(start + new Vector2(2 + s * Projectile.scale * (oldPosSaved.Count * 1.5f + 5) * 3.5f, y).RotatedBy(rot - MathHelper.PiOver2), new Vector3(s * 0.5f, 1, 0), Color.White * alpha * 1.75f));
+                vertices2.Add(Helper.AsVertex(start + new Vector2(2 + s * Projectile.scale * (oldPosSaved.Count * 1.5f + 5) * 3.5f, y).RotatedBy(rot + MathHelper.PiOver2), new Vector2(s * 0.5f, 0), Color.White * alpha * 1.75f));
+                vertices2.Add(Helper.AsVertex(start + new Vector2(2 + s * Projectile.scale * (oldPosSaved.Count * 1.5f + 5) * 3.5f, y).RotatedBy(rot - MathHelper.PiOver2), new Vector2(s * 0.5f, 1), Color.White * alpha * 1.75f));
             }
         }
         SpritebatchParameters sbParams = Main.spriteBatch.Snapshot();
         Main.spriteBatch.End();
         Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.AnisotropicClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
-        Main.graphics.GraphicsDevice.Textures[0] = tex;
         if (vertices.Count >= 3)
         {
             for (int j = 0; j < 3; j++)
-                Main.graphics.GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleStrip, vertices.ToArray(), 0, vertices.Count - 2);
+                Helper.DrawTexturedPrimitives(vertices.ToArray(), PrimitiveType.TriangleStrip, tex);
 
-            Main.graphics.GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleStrip, vertices2.ToArray(), 0, vertices2.Count - 2);
+            Helper.DrawTexturedPrimitives(vertices2.ToArray(), PrimitiveType.TriangleStrip, tex);
         }
         Main.spriteBatch.ApplySaved(sbParams);
         return false;
