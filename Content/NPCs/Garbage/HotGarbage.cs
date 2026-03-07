@@ -18,7 +18,9 @@ public partial class HotGarbage : ModNPC
 
     public override void AI()
     {
-        NextAttack = State.WarningForBigDash;
+        NextAttack = State.OpenLid;
+        NextAttack2 = State.GiantFireball;
+        
         AmbientFX();
 
         TargetingLogic();
@@ -48,95 +50,14 @@ public partial class HotGarbage : ModNPC
             case State.BigDash:
                 DoBigDash();
                 break;
-        }
-        if (AIState == State.SpewFire)
-        {
-            AnimationStyle = AnimationStyles.Open;
             
-            Phase();
-            NPC.velocity.X = Lerp(NPC.velocity.X, Helper.FromAToB(NPC.Center, player.Center).X * 2.5f, 0.15f);
-            AITimer++;
-            if (AITimer % 6 == 0)
-            {
-                SoundEngine.PlaySound(SoundID.Item34, NPC.Center);
-                for (int i = -2; i < 2; i++)
-                {
-                    MPUtils.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(Main.rand.NextFloat(-15, 15), 0), new Vector2(NPC.direction * Main.rand.NextFloat(5, 10), -4 - Main.rand.NextFloat(2, 4)), ProjectileType<GarbageFlame>(), 15, 0);
-                }
-            }
-            if (AITimer >= 100)
-            {
-                NPC.velocity = Vector2.Zero;
-                AITimer = 0;
-                NPC.damage = 0;
-                NextAttack = State.SlamPreperation;
-                AIState = State.CloseLid;
-                NPC.netUpdate = true;
-            }
+            case State.SpewFire:
+            case State.SpewFire2:    
+            case State.GiantFireball:    
+                DoFireSpewAttacks();
+                break;
         }
-        else if (AIState == State.SpewFire2)
-        {
-            AnimationStyle = AnimationStyles.Open;
-            
-            AITimer++;
-            Phase();
-            NPC.velocity.X = Lerp(NPC.velocity.X, Helper.FromAToB(NPC.Center, player.Center).X * 2.5f, 0.15f);
-            if (AITimer % 6 == 0 && AITimer > 30)
-            {
-                SoundEngine.PlaySound(SoundID.DD2_FlameburstTowerShot, NPC.Center);
-                for (int i = 0; i < 4; i++)
-                {
-                    MPUtils.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(Main.rand.NextFloat(-15, 15), 0), new Vector2(NPC.direction * Main.rand.NextFloat(-10, 10), -6 - Main.rand.NextFloat(2, 4)), ProjectileType<GarbageFlame>(), 15, 0);
-                }
-            }
-            if (AITimer >= 70)
-            {
-                AITimer = 0;
-                NPC.damage = 0;
-                NPC.velocity = Vector2.Zero;
-                NextAttack2 = State.SateliteLightning;
-                NextAttack = State.OpenLid;
-                AIState = State.CloseLid;
-                NPC.netUpdate = true;
-            }
-        }
-        else if (AIState == State.GiantFireball)
-        {
-            AnimationStyle = AnimationStyles.Open;
-            
-            Phase();
-            NPC.velocity.X = Lerp(NPC.velocity.X, Helper.FromAToB(NPC.Center, player.Center + Helper.FromAToB(player.Center, NPC.Center) * 70, false).X * 0.01f, 0.15f);
-            FacePlayer();
-            AITimer++;
-            if (AITimer == 10)
-            {
-                SoundEngine.PlaySound(SoundID.Item34, NPC.Center);
-                MPUtils.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(Main.rand.NextFloat(-15, 15), 0), new Vector2(NPC.direction * Main.rand.NextFloat(5, 10), -4 - Main.rand.NextFloat(2, 4)), ProjectileType<GarbageFlame>(), 15, 0);
-            }
-            if (AITimer == 20)
-            {
-                SoundEngine.PlaySound(SoundID.DD2_FlameburstTowerShot, NPC.Center);
-                for (int i = 0; i < 3; i++)
-                    MPUtils.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(Main.rand.NextFloat(-15, 15), 0), new Vector2(NPC.direction * Main.rand.NextFloat(5, 10), -4 - Main.rand.NextFloat(2, 4)), ProjectileType<GarbageFlame>(), 15, 0);
-            }
-            if (AITimer == 80)
-            {
-                CameraSystem.ScreenShakeAmount = 12;
-                SoundEngine.PlaySound(SoundID.DD2_FlameburstTowerShot.WithPitchOffset(-0.4f).WithVolumeScale(1.1f), NPC.Center);
-                for (int i = 0; i < 5; i++)
-                    MPUtils.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(Main.rand.NextFloat(-15, 15), 0), new Vector2(NPC.direction * Main.rand.NextFloat(5, 10), -7 - Main.rand.NextFloat(4, 7)), ProjectileType<GarbageGiantFlame>(), 15, 0, ai2: 1);
-            }
-            if (AITimer >= 80)
-            {
-                AITimer = 0;
-                NPC.damage = 0;
-                NPC.velocity = Vector2.Zero;
-                NextAttack = State.MassiveLaser;
-                AIState = State.CloseLid;
-                NPC.netUpdate = true;
-            }
-        }
-        else if (AIState == State.TrashBags)
+        if (AIState == State.TrashBags)
         {
             if (AITimer < 100)
                 AnimationStyle = AnimationStyles.Open;

@@ -126,13 +126,13 @@ public partial class HotGarbage : ModNPC
     
     void FacePlayer() => NPC.direction = player.Center.X > NPC.Center.X ? 1 : -1;
 
-    void ResetTo(State state, State? stateAfterOpenLid = null)
+    void ResetTo(State state, State? stateAfterOpenLid = null, bool lidAttack = false)
     {
         NextAttack = state;
         if (stateAfterOpenLid != null)
             NextAttack2 = stateAfterOpenLid.Value;
         
-        AIState = State.Idle;
+        AIState = lidAttack ? State.CloseLid : State.Idle;
         AITimer = 0;
         AITimer2 = 0;
         AITimer3 = 0;

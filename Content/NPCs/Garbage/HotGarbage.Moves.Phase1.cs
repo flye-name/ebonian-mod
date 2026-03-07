@@ -1,6 +1,8 @@
 using System;
+using EbonianMod.Content.Dusts;
 using EbonianMod.Content.NPCs.Garbage.Projectiles;
 using EbonianMod.Content.Projectiles.VFXProjectiles;
+using EbonianMod.Core.Systems.Cinematic;
 
 namespace EbonianMod.Content.NPCs.Garbage;
 
@@ -76,10 +78,10 @@ public partial class HotGarbage : ModNPC
 
 	void DoSlam()
 	{
+		AITimer++;
 		if (AIState == State.SlamPreperation)
         {
 	        AnimationStyle = AnimationStyles.BoostWarning;
-            AITimer++;
             if (AITimer > 15)
             {
 	            AnimationStyle = AnimationStyles.Boost;
@@ -107,7 +109,6 @@ public partial class HotGarbage : ModNPC
             if (MathF.Abs(NPC.velocity.Y) > 1f && (AITimer > 200 || AITimer < 50))
                 AnimationStyle = AnimationStyles.Boost;
             
-            AITimer++;
             NPC.noGravity = true;
             NPC.damage = 60;
             if (AITimer < 50)
@@ -173,11 +174,10 @@ public partial class HotGarbage : ModNPC
 	}
 	
 	void DoBigDash() {
+		AITimer++;
 		if (AIState == State.WarningForBigDash)
 		{
 			AnimationStyle = AnimationStyles.BoostWarning;
-            
-			AITimer++;
 			NPC.velocity.X = Helper.FromAToB(NPC.Center, player.Center).X * -1;
 			if (AITimer == 10)
 			{
@@ -199,9 +199,6 @@ public partial class HotGarbage : ModNPC
 		else if (AIState == State.BigDash)
 		{
 			AnimationStyle = AnimationStyles.Boost;
-			   
-			AITimer++;
-
 			Phase();
 			NPC.damage = 90;
 			NPC.rotation = Lerp(NPC.rotation, 0, 0.35f);
@@ -229,5 +226,86 @@ public partial class HotGarbage : ModNPC
 				AITimer = -50;
 			}
 		}
+	}
+	
+	void DoFireSpewAttacks() {
+		AnimationStyle = AnimationStyles.Open;
+		AITimer++;
+		Phase();
+
+		void SpitOutDust()
+		{
+			Vector2 velocity = new Vector2(NPC.direction * Main.rand.NextFloat(5, 10), -4 - Main.rand.NextFloat(2, 4)).RotatedByRandom(1);
+			Dust.NewDustPerfect(NPC.Center + new Vector2(Main.rand.NextFloat(-15, 15), 0), DustType<GarbageFlameDust>(), velocity * Main.rand.NextFloat(0.5f, 1), newColor: Color.OrangeRed, Scale: 0.15f);
+		}
+		
+        if (AIState == State.SpewFire)
+        {
+            NPC.velocity.X = Lerp(NPC.velocity.X, Helper.FromAToB(NPC.Center, player.Center).X * 2.5f, 0.15f);
+            if (AITimer % 6 == 0)
+            {
+                SoundEngine.PlaySound(SoundID.Item34, NPC.Center);
+                for (int i = -2; i < 2; i++)
+                {
+	                SpitOutDust();
+                    MPUtils.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(Main.rand.NextFloat(-15, 15), 0), new Vector2(NPC.direction * Main.rand.NextFloat(5, 10), -4 - Main.rand.NextFloat(2, 4)), ProjectileType<GarbageFlame>(), 15, 0);
+                }
+            }
+            if (AITimer >= 100)
+	            ResetTo(State.SlamPreperation, null, true);
+        }
+        else if (AIState == State.SpewFire2)
+        {
+            NPC.velocity.X = Lerp(NPC.velocity.X, Helper.FromAToB(NPC.Center, player.Center).X * 2.5f, 0.15f);
+            if (AITimer % 6 == 0 && AITimer > 30)
+            {
+                SoundEngine.PlaySound(SoundID.DD2_FlameburstTowerShot, NPC.Center);
+                for (int i = 0; i < 4; i++)
+                {
+	                Vector2 velocity = new Vector2(NPC.direction * Main.rand.NextFloat(-10, 10), -6 - Main.rand.NextFloat(2, 4)).RotatedByRandom(1);
+	                Dust.NewDustPerfect(NPC.Center + new Vector2(Main.rand.NextFloat(-15, 15), 0), DustType<GarbageFlameDust>(), velocity * Main.rand.NextFloat(0.5f, 1), newColor: Color.OrangeRed, Scale: 0.15f);
+                    MPUtils.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(Main.rand.NextFloat(-15, 15), 0), new Vector2(NPC.direction * Main.rand.NextFloat(-10, 10), -6 - Main.rand.NextFloat(2, 4)), ProjectileType<GarbageFlame>(), 15, 0);
+                }
+            }
+            if (AITimer >= 70)
+	            ResetTo(State.OpenLid, State.SateliteLightning, true);
+        }
+        else if (AIState == State.GiantFireball)
+        {
+            NPC.velocity.X = Lerp(NPC.velocity.X, Helper.FromAToB(NPC.Center, player.Center + Helper.FromAToB(player.Center, NPC.Center) * 70, false).X * 0.01f, 0.15f);
+            FacePlayer();
+            if (AITimer == 10)
+            {
+                SoundEngine.PlaySound(SoundID.Item34, NPC.Center);
+                
+                for (int i = 0; i < 10; i++)
+	                SpitOutDust();
+                
+                MPUtils.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(Main.rand.NextFloat(-15, 15), 0), new Vector2(NPC.direction * Main.rand.NextFloat(5, 10), -4 - Main.rand.NextFloat(2, 4)), ProjectileType<GarbageFlame>(), 15, 0);
+            }
+            if (AITimer == 20)
+            {
+                SoundEngine.PlaySound(SoundID.DD2_FlameburstTowerShot, NPC.Center);
+                
+                for (int i = 0; i < 15; i++)
+	                SpitOutDust();
+                
+                for (int i = 0; i < 3; i++)
+                    MPUtils.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(Main.rand.NextFloat(-15, 15), 0), new Vector2(NPC.direction * Main.rand.NextFloat(5, 10), -4 - Main.rand.NextFloat(2, 4)), ProjectileType<GarbageFlame>(), 15, 0);
+            }
+            if (AITimer == 80)
+            {
+                CameraSystem.ScreenShakeAmount = 12;
+                SoundEngine.PlaySound(SoundID.DD2_FlameburstTowerShot.WithPitchOffset(-0.4f).WithVolumeScale(1.1f), NPC.Center);
+                
+                for (int i = 0; i < 30; i++)
+	                SpitOutDust();
+                
+                for (int i = 0; i < 5; i++)
+                    MPUtils.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(Main.rand.NextFloat(-15, 15), 0), new Vector2(NPC.direction * Main.rand.NextFloat(5, 10), -7 - Main.rand.NextFloat(4, 7)), ProjectileType<GarbageGiantFlame>(), 15, 0, ai2: 1);
+            }
+            if (AITimer >= 80)
+	            ResetTo(State.MassiveLaser, null, true);
+        }
 	}
 }

@@ -89,8 +89,6 @@ public class GarbageFlame : ModProjectile
         if (Projectile.timeLeft < 30)
         {
             alpha = MathHelper.SmoothStep(1, 0, 1f - Projectile.timeLeft / 30f);
-            
-            
         }
     }
 }
