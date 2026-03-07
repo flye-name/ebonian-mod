@@ -45,9 +45,12 @@ public partial class HotGarbage : ModNPC
 
         if (Main.GameUpdateCount % 4 == 2)
             CachedVelocityForVFX = NPC.velocity;
-    
+
         if (NPC.velocity.Length() > 1f)
-            Dust.NewDustDirect(NPC.Center + new Vector2(-NPC.width / (NPC.direction == -1 ? 2.5f : 8f), -8).RotatedBy(NPC.rotation), NPC.width / 2, 2, DustID.Poop, NPC.velocity.X, NPC.velocity.Y, Scale: 0.5f);
+        {
+            Vector2 topLeft = NPC.Center + new Vector2(-NPC.width / (NPC.direction == -1 ? 2.5f : 8f), -8).RotatedBy(NPC.rotation);
+            Dust.NewDustPerfect(topLeft + new Vector2(Main.rand.NextFloat(NPC.width / 2f), Main.rand.NextFloat(2)).RotatedBy(NPC.rotation), DustID.Poop, NPC.velocity, Scale: 0.5f);
+        }
 
         if (NPC.Grounded() && MathF.Abs(NPC.velocity.X) is > 0.75f and < 5f && MathF.Abs(NPC.velocity.X) < MathF.Abs(CachedVelocityForVFX.X) && NPC.rotation == 0f)
         {

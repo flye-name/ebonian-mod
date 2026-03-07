@@ -45,6 +45,7 @@ public partial class HotGarbage : ModNPC
         AnimationStyle = AnimationStyles.Idle;
         AITimer++;
         
+        NPC.noTileCollide = false;
         NPC.dontTakeDamage = false;
         NPC.damage = 0;
         NPC.rotation = Lerp(NPC.rotation, 0, 0.35f);

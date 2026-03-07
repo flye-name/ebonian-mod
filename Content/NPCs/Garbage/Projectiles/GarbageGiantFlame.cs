@@ -1,6 +1,7 @@
 ﻿using EbonianMod.Content.Projectiles.VFXProjectiles;
 using System;
 using EbonianMod.Common.Graphics;
+using EbonianMod.Content.Dusts;
 
 namespace EbonianMod.Content.NPCs.Garbage.Projectiles;
 
@@ -28,6 +29,10 @@ public class GarbageGiantFlame : ModProjectile
             if (b < Projectile.oldPos.Length / 2)
                 for (int i = 0; i < 15; i++)
                     Dust.NewDustPerfect(oldpos + Projectile.Size / 2 + Main.rand.NextVector2Circular(15, 15), DustID.Torch, Main.rand.NextVector2Circular(1.5f, 1.5f) * (3 + (1f - fadeMult * b)), Scale: 1 + fadeMult * 1.5f).noGravity = true;
+            
+            for (int i = 0; i < 3; i++) {
+                Dust.NewDustPerfect(oldpos + Projectile.Size / 2 + Main.rand.NextVector2Circular(15, 15), ModContent.DustType<GarbageFlameDust>(), new Vector2(Main.rand.NextFloat(-2, 2), Main.rand.NextFloat(0, 2)) * s * 5, newColor: Color.OrangeRed, Scale: s * 0.2f).noGravity = true;
+            }
         }
         if (Projectile.ai[2] != 0)
         {
@@ -84,5 +89,7 @@ public class GarbageGiantFlame : ModProjectile
             Projectile.timeLeft = 200;
         if (Projectile.Center.Y >= Main.LocalPlayer.Center.Y - 50)
             Projectile.tileCollide = true;
+        
+        Dust.NewDustPerfect(Projectile.Center + Main.rand.NextVector2Circular(15, 15), ModContent.DustType<GarbageFlameDust>(), Projectile.velocity.RotatedByRandom(0.5f) * 0.5f, newColor: Color.OrangeRed, Scale: 0.1f).noGravity = true;
     }
 }

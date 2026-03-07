@@ -28,10 +28,13 @@ public class GarbageDashFlames : ModProjectile
 		Vector2 bottomRight = Helper.Raycast(Projectile.BottomRight, Vector2.UnitY, 32).Point;
 		
 		float lowestY = MathF.Max(bottomLeft.Y, bottomRight.Y);
-		while (lowestY > Projectile.Bottom.Y)
+
+		int attempts = 0;
+		while (lowestY > Projectile.Bottom.Y && attempts++ < 100)
 			Projectile.Bottom = new Vector2(Projectile.Bottom.X, lowestY);
 
-		while (!Helper.Raycast(Projectile.Center - new Vector2(0, 10), Vector2.UnitY, 2).Success)
+		attempts = 0;
+		while (!Helper.Raycast(Projectile.Center - new Vector2(0, 10), Vector2.UnitY, 2).Success && attempts++ < 100)
 			Projectile.Center += Vector2.UnitY;
 		
 		if (Projectile.ai[2] == 0)

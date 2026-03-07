@@ -18,11 +18,8 @@ public partial class HotGarbage : ModNPC
 
     public override void AI()
     {
-        NextAttack = State.WarningForDash;
+        NextAttack = State.SlamPreperation;
         AmbientFX();
-        
-        if (AIState != State.Idle && AIState != State.SlamSlamSlam && AIState != State.PipeBombAirstrike)
-            NPC.noTileCollide = false;
 
         TargetingLogic();
         

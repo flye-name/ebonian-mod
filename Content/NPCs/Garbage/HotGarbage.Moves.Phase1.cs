@@ -83,13 +83,16 @@ public partial class HotGarbage : ModNPC
             if (AITimer > 15)
             {
 	            AnimationStyle = AnimationStyles.Boost;
-	            NPC.rotation += ToRadians(MathHelper.Lerp(-.9f, -2f, AITimer / 75f) * NPC.direction);
+	            NPC.rotation += ToRadians(MathHelper.Lerp(-.9f, -1.7f, AITimer / 75f) * NPC.direction);
 	            NPC.noGravity = true;
+	            NPC.noTileCollide = true;
             }
 	
-			NPC.velocity += new Vector2(NPC.direction * MathHelper.Lerp(0.5f, 1, AITimer / 75f), 0).RotatedBy(NPC.rotation);
+            Vector2 velocity = new Vector2(NPC.direction * MathHelper.Lerp(0.5f, 1, AITimer / 75f), 0).RotatedBy(NPC.rotation);
+			NPC.velocity = velocity * (AITimer / 75f) * 25;
             if (AITimer >= 75)
             {
+	            NPC.noTileCollide = false;
 	            NPC.noGravity = false;
                 NPC.netUpdate = true;
                 AITimer = 0;
@@ -119,7 +122,7 @@ public partial class HotGarbage : ModNPC
                 if (AITimer < 176)
                     DisposablePosition = player.Center - new Vector2(-player.velocity.X * 20, 500);
                 NPC.direction = NPC.spriteDirection = 1;
-                NPC.rotation = Lerp(NPC.rotation, ToRadians(90), 0.15f);
+                NPC.rotation = Lerp(NPC.rotation, ToRadians(90), 0.05f);
                 if (AITimer % 8 == 0)
                     NPC.velocity = Helper.FromAToB(NPC.Center, DisposablePosition, false) * MathHelper.Lerp(0.025f, 0.056f, Helper.Saturate((AITimer - 50f) / 50f));
             }
