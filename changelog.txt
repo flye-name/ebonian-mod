@@ -8,11 +8,12 @@ v3.0
 - Reorganized the mod's codebase (this doesn't affect the mod in any direct way but there's a risk for oversights)
 - Changed the way some special effects were rendered, fixing an issue where they would lag behind one frame
 - Made the River of Starlight event rarer and not occur during blood moons or invasions
-- The Shewstone now tries to bounce towards the cursor instead of just bouncing backwards
 - Made some music tracks quieter
 
 ## Changes to Items:
 - Decreased the chance for giant fallen stars to drop special items
+- Increased the Cold Touch's mana usage
+- The Shewstone now tries to bounce towards the cursor instead of just bouncing backwards
 - Simplified the recipes for most hardmode evil biome weapons, removing the need for random pre-hm weapons
 - Mawzooka, Fangnum, Vile Musket, and Equilibrium now need to be crafted at a demon/crimson altar 
 - Nerfed the Gutling and moved it in progression

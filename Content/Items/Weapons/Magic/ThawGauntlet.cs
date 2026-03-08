@@ -9,7 +9,7 @@ public class ThawGauntlet : ModItem
     {
         Item.damage = 20;
         Item.DamageType = DamageClass.Magic;
-        Item.mana = 2;
+        Item.mana = 15;
         Item.noUseGraphic = true;
         Item.noMelee = true;
         Item.crit = -4;
@@ -97,7 +97,7 @@ public class ThawGauntletP : ModProjectile
         player.heldProj = Projectile.whoAmI;
         Projectile.Center = player.GetFrontHandPosition(Player.CompositeArmStretchAmount.Full, Projectile.rotation - MathHelper.PiOver2);
         player.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.Full, Projectile.rotation - MathHelper.PiOver2);
-        if (!player.channel || player.statMana <= 0 || !player.CheckMana(1)) Projectile.Kill();
+        if (!player.channel || player.statMana <= 0) Projectile.Kill();
     }
 }
 
@@ -196,18 +196,12 @@ public class ThawGauntletP2 : ModProjectile
                     alpha = 1f;
                 }
             }
-            if (!didAlpha)
-                if (Projectile.ai[1] % 5 == 0)
-                {
-                    player.CheckMana(2, true, true);
-                    player.manaRegenDelay = (int)player.maxRegenDelay;
-                }
             if (player.ZoneSnow)
                 Projectile.timeLeft = 600;
             else
                 Projectile.timeLeft = 300;
         }
-        if (Projectile.ai[0] == 0 && (!player.channel || player.statMana <= 0 || !player.CheckMana(1)))
+        if (Projectile.ai[0] == 0 && (!player.channel || player.statMana <= 0))
         {
             if (Projectile.localAI[0] < 0.95f)
                 Projectile.Kill();
@@ -233,7 +227,6 @@ public class ThawGauntletP2 : ModProjectile
                 }
                 else
                 {
-                    Main.player[Projectile.owner].statMana += 5;
                     Projectile.timeLeft -= 300;
                 }
                 Helper.SpawnDust(Projectile.Bottom + new Vector2(5 * -Projectile.direction, -4), Vector2.One, DustID.Frost, new Vector2(-Projectile.velocity.X, -2), 2, new Action<Dust>((target) => { target.noGravity = true; target.scale = Main.rand.NextFloat(0.6f, 0.9f); }
