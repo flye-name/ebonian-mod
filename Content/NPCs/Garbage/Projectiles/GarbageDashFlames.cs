@@ -11,7 +11,7 @@ public class GarbageDashFlames : ModProjectile
 	public override void SetDefaults()
 	{
 		Projectile.width = 20;
-		Projectile.height = 10;
+		Projectile.height = 30;
 		Projectile.aiStyle = -1;
 		Projectile.friendly = false;
 		Projectile.tileCollide = false;
@@ -46,7 +46,7 @@ public class GarbageDashFlames : ModProjectile
 			Projectile.ai[1] = Main.rand.NextFloat(0.7f, 1.2f);
 		Projectile.ai[0] = MathHelper.Lerp(Projectile.ai[0], 1, 0.1f);
 		if (Main.rand.NextBool(4))
-			Dust.NewDustPerfect(Projectile.Top + new Vector2(Main.rand.NextFloat(-25, 25f), Main.rand.NextFloat(-8f, -2f) * Projectile.scale), ModContent.DustType<LineDustFollowPoint>(), Projectile.scale * new Vector2(Main.rand.NextFloat(-2, 2), Main.rand.NextFloat(-3, -1)), Scale: Main.rand.NextFloat(0.03f, 0.1f), newColor: Color.OrangeRed);
+			Dust.NewDustPerfect(Projectile.Center + new Vector2(Main.rand.NextFloat(-25, 25f), Main.rand.NextFloat(-8f, -2f) * Projectile.scale), ModContent.DustType<LineDustFollowPoint>(), Projectile.scale * new Vector2(Main.rand.NextFloat(-2, 2), Main.rand.NextFloat(-3, -1)), Scale: Main.rand.NextFloat(0.03f, 0.1f), newColor: Color.OrangeRed);
 		Projectile.scale = MathHelper.Clamp(MathHelper.SmoothStep(0, 2, Projectile.timeLeft / 100f), 0.2f, 2);
 	}
 
