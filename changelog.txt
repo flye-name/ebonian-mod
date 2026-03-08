@@ -9,6 +9,7 @@ v3.0
 - Changed the way some special effects were rendered, fixing an issue where they would lag behind one frame
 - Made the River of Starlight event rarer and not occur during blood moons or invasions
 - The Shewstone now tries to bounce towards the cursor instead of just bouncing backwards
+- Made some music tracks quieter
 
 ## Changes to Items:
 - Decreased the chance for giant fallen stars to drop special items
