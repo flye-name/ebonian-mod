@@ -29,7 +29,15 @@ namespace EbonianMod.Content.Projectiles.Friendly.Generic
         }
         public override bool OnTileCollide(Vector2 oldVelocity)
         {
-            Projectile.velocity = -oldVelocity;
+            if (Main.myPlayer == Projectile.owner)
+            {
+                Vector2 velocity = Helper.FromAToB(Projectile.Center, Main.MouseWorld);
+                if (!Helper.Raycast(Projectile.Center, velocity, 25).Success)
+                    Projectile.velocity = velocity * oldVelocity.Length();
+                else
+                    Projectile.velocity = -oldVelocity;
+                Projectile.netUpdate = true;
+            }
             return false;
         }
         bool hasHit = false;
