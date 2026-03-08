@@ -180,7 +180,12 @@ public class SmokeDustAkaFireDustButNoGlow2 : ModDust
     {
         float alpha = MathHelper.Lerp(1, 0, d.scale * 2.857142857142857f);
         Texture2D tex = d.dustIndex % 2 == 0 ? Assets.Extras.Extras2.fire_01.Value : Assets.Extras.Extras2.fire_02.Value;
-        Main.spriteBatch.Draw(tex, d.position - Main.screenPosition, null, d.color with { A = 0 } * alpha, d.rotation, tex.Size() / 2, d.scale * 2, SpriteEffects.None, 0);
+
+        float scaleMultiplier = 1f;
+        if (d.customData is float scale)
+            scaleMultiplier = scale;
+        
+        PixelationRendering.DrawCache.Add(() => Main.spriteBatch.Draw(tex, d.position - Main.screenPosition, null, d.color with { A = 0 } * alpha, d.rotation, tex.Size() / 2, d.scale * 2 * scaleMultiplier, SpriteEffects.None, 0));
         return false;
     }
 }

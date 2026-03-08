@@ -18,8 +18,8 @@ public partial class HotGarbage : ModNPC
 
     public override void AI()
     {
-        NextAttack = State.TrashBags;
-        
+        NextAttack = State.OpenLid;
+        NextAttack2 = State.SodaMissiles;
         AmbientFX();
 
         TargetingLogic();
@@ -61,36 +61,12 @@ public partial class HotGarbage : ModNPC
             case State.TrashBags:
                 DoTrashBags();
                 break;
+            
+            case State.SodaMissiles:
+                DoSodaMissiles();
+                break;
         }
-        if (AIState == State.SodaMissiles)
-        {
-            if (AITimer == 1 && !MPUtils.NotMPClient)
-            {
-                AITimer3 = Main.rand.Next(10000000);
-                
-                NPC.netUpdate = true;
-            }
-            AITimer3++;
-            UnifiedRandom rand = new((int)AITimer3);
-            AITimer++;
-            Phase();
-            NPC.velocity.X = Lerp(NPC.velocity.X, Helper.FromAToB(NPC.Center, player.Center).X * 4, 0.15f);
-            if (AITimer % 5 == 0 && AITimer < 60 && AITimer > 20)
-            {
-                SoundEngine.PlaySound(SoundID.Item156, NPC.Center);
-                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, new Vector2(rand.NextFloat(-4, 4), -7), ProjectileType<GarbageMissile>(), 15, 0, player.whoAmI, ToRadians(rand.NextFloat(-3, 3)));
-            }
-            if (AITimer >= 60)
-            {
-                NPC.netUpdate = true;
-                AITimer = 0;
-                NPC.damage = 0;
-                NPC.velocity = Vector2.Zero;
-                NextAttack = State.MailBoxes;
-                AIState = State.CloseLid;
-            }
-        }
-        else if (AIState == State.MailBoxes)
+        if (AIState == State.MailBoxes)
         {
             NPC.velocity.X = Lerp(NPC.velocity.X, Helper.FromAToB(NPC.Center, player.Center + Helper.FromAToB(player.Center, NPC.Center) * 70, false).X * 0.043f, 0.12f);
             AITimer++;
@@ -110,7 +86,7 @@ public partial class HotGarbage : ModNPC
                 AITimer = -80;
             }
         }
-        else if (AIState == State.SateliteLightning)
+        if (AIState == State.SateliteLightning)
         {
             AnimationStyle = AnimationStyles.Open;
             
@@ -143,7 +119,7 @@ public partial class HotGarbage : ModNPC
                 NPC.netUpdate = true;
             }
         }
-        else if (AIState == State.PipeBombAirstrike)
+        if (AIState == State.PipeBombAirstrike)
         {
             AnimationStyle = AnimationStyles.BoostWarning;
             if (AITimer > 25 && NPC.velocity.Length() > 4f)
@@ -207,7 +183,7 @@ public partial class HotGarbage : ModNPC
                 ResetTo(State.OpenLid, State.GiantFireball);
             }
         }
-        else if (AIState == State.MassiveLaser)
+        if (AIState == State.MassiveLaser)
         {
             AnimationStyle = AnimationStyles.BoostWarning;
             if (AITimer > 25 && NPC.velocity.Length() > 4f)

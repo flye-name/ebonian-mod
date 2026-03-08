@@ -341,4 +341,35 @@ public partial class HotGarbage : ModNPC
 		if (AITimer >= 170)
 			ResetTo(State.OpenLid, State.SodaMissiles);
 	}
+
+	void DoSodaMissiles()
+	{
+		AnimationStyle = AnimationStyles.Open;
+		
+		if (AITimer == 1 && !MPUtils.NotMPClient)
+		{
+			AITimer3 = Main.rand.Next(10000000);
+			NPC.netUpdate = true;
+		}
+		AITimer3++;
+		AITimer++;
+		Phase();
+		FacePlayer();
+		NPC.velocity.X = Lerp(NPC.velocity.X, 0, 0.05f);
+                
+		UnifiedRandom rand = new((int)AITimer3);
+		if (AITimer % 3 == 0 && AITimer < 60 && AITimer > 20)
+		{
+			SoundEngine.PlaySound(SoundID.Item156, NPC.Center);
+			float angle = rand.NextFloat(-3, 3);
+			if (angle is < 0 and > -1)
+				angle = -1;
+			if (angle is >= 0 and < 1)
+				angle = 1;
+			Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, new Vector2(rand.NextFloat(-4, 4), -7), ProjectileType<GarbageMissile>(), 15, 0, player.whoAmI, ToRadians(angle));
+		}
+            
+		if (AITimer >= 60)
+			ResetTo(State.MailBoxes, null, true);
+	}
 }
