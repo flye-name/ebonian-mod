@@ -21,8 +21,18 @@ public class GarbageDashFlames : ModProjectile
 
 	public override bool ShouldUpdatePosition() => false;
 
+	public override bool? CanDamage() => false;
+
 	public override void AI()
 	{
+		Lighting.AddLight(Projectile.Center, 0.85f, 0.3f, 0.1f);
+		
+		foreach (Player player in Main.ActivePlayers)
+		{
+			if (Projectile.Hitbox.Intersects(player.Hitbox))
+				player.AddBuff(BuffID.Burning, 60);
+		}
+		
 		if (Projectile.ai[2] > 0)
 			Projectile.extraUpdates = (int)Projectile.ai[2];
 		Collision.StepDown(ref Projectile.position, ref Projectile.velocity, Projectile.width, Projectile.height, ref Projectile.stepSpeed, ref Projectile.gfxOffY);

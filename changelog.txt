@@ -50,3 +50,4 @@ v3.0
 - Fixed the Tittering's Terrortoma-specific stats always being applied
 - Fixed the Nasty Snapper glowing
 - Fixed Rolypoly using incorrect gore sprites
+- Fixed the Cold Touch not climbing slopes
