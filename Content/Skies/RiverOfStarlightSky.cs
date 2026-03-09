@@ -108,15 +108,14 @@ public class RiverOfStarlightSky : CustomSky
             }
             int yOff = (int)Lerp(20, -70, Clamp(Main.LocalPlayer.Center.Y / 6000f, 0, 1));
 
-            spriteBatch.Draw(Tex, new Rectangle(0, 0 - (int)Main.screenPosition.Y, Main.screenWidth, 3500), null, Color.DodgerBlue * Intensity * 0.65f, 0, Vector2.Zero, SpriteEffects.None, 0);
-            for (int i = 0; i < 2; i++)
-                spriteBatch.Draw(Tex3, new Rectangle(0, -50, Main.screenWidth, Main.screenHeight + 200), null, Color.DodgerBlue * Intensity * 0.8f, 0, Vector2.Zero, SpriteEffects.None, 0);
+            spriteBatch.Draw(Tex, new Rectangle(0, 0 - (int)Main.screenPosition.Y, Main.screenWidth, 3500), null, Color.DodgerBlue * Intensity * 0.35f, 0, Vector2.Zero, SpriteEffects.None, 0);
+
+            spriteBatch.Draw(Tex3, new Rectangle(0, -50, Main.screenWidth, Main.screenHeight + 200), null, Color.DodgerBlue * Intensity * 0.8f, 0, Vector2.Zero, SpriteEffects.None, 0);
 
             Effects.starlightRiver.Value.CurrentTechnique.Passes[0].Apply();
             Effects.starlightRiver.Value.Parameters["uTime"].SetValue(Main.GlobalTimeWrappedHourly);
-            Effects.starlightRiver.Value.Parameters["colMult"].SetValue(3 * Intensity);
-            for (int i = 0; i < 2; i++)
-                spriteBatch.Draw(Tex2, new Rectangle(0, -50 + yOff, Main.screenWidth, Main.screenHeight + 300), null, Color.DodgerBlue * Intensity * 0.4f, 0, Vector2.Zero, SpriteEffects.FlipVertically, 0);
+            Effects.starlightRiver.Value.Parameters["colMult"].SetValue(2 * Intensity);
+            spriteBatch.Draw(Tex2, new Rectangle(0, -50 + yOff, Main.screenWidth, Main.screenHeight + 300), null, Color.DodgerBlue * Intensity * 0.4f, 0, Vector2.Zero, SpriteEffects.FlipVertically, 0);
             spriteBatch.End();
             spriteBatch.ApplySaved(sbParams);
         }

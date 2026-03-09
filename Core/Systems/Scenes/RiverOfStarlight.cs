@@ -46,11 +46,11 @@ public class RiverOfStarlightPlayer : ModPlayer
 {
     public override void PostUpdate()
     {
-        if (RiverOfStarlight.ActiveConditions ? Main.rand.NextBool(8500) : false)
+        if (RiverOfStarlight.ActiveConditions ? Main.rand.NextBool(12000) : false)
         {
             MPUtils.NewProjectile(Player.GetSource_FromThis(), Player.Center + new Vector2(1920 * Main.rand.NextFloat() - 960, -3000), new Vector2(Main.rand.NextFloat(-1, 1), 20f), ModContent.ProjectileType<FallingStarBig>(), 2000, 0);
         }
-        if (RiverOfStarlight.ActiveConditions ? Main.rand.NextBool(300) : false)
+        if (RiverOfStarlight.ActiveConditions ? Main.rand.NextBool(600) : false)
         {
             MPUtils.NewProjectile(Player.GetSource_FromThis(), Player.Center + new Vector2(1920 * Main.rand.NextFloat() - 960, -2500), new Vector2(Main.rand.NextFloat(-10, 10), 20f), ModContent.ProjectileType<FallingStarTiny>(), 10, 0);
         }

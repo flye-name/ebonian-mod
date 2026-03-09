@@ -28,7 +28,7 @@ public class RoSTest : ModItem
         if (player.whoAmI == Main.myPlayer)
         {
             if (Main.mouseRight)
-                Star.starfallBoost = 3;
+                Star.starfallBoost = 4;
             else
                 Star.starfallBoost = 0;
             NetMessage.SendData(MessageID.WorldData);
