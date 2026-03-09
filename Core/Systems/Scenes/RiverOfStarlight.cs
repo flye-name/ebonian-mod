@@ -11,7 +11,7 @@ public class RiverOfStarlight : ModSceneEffect
 {
     public override int Music => MusicLoader.GetMusicSlot(Mod, "Assets/Music/Meteor");
     public override SceneEffectPriority Priority => SceneEffectPriority.Environment;
-    public static bool ActiveConditions => !Main.dayTime && Star.starfallBoost > 3.2f && !Main.bloodMoon && Main.invasionType == 0;
+    public static bool ActiveConditions => !Main.dayTime && Star.starfallBoost > 3.2f && !Main.bloodMoon && Main.invasionType <= 0;
     public override bool IsSceneEffectActive(Player player)
     {
         return ActiveConditions && (player.ZoneOverworldHeight || player.ZoneSkyHeight);
