@@ -18,8 +18,8 @@ public partial class HotGarbage : ModNPC
 
     public override void AI()
     {
-        NextAttack = State.OpenLid;
-        NextAttack2 = State.SodaMissiles;
+        NextAttack = State.MailBoxes;
+        
         AmbientFX();
 
         TargetingLogic();
@@ -65,26 +65,10 @@ public partial class HotGarbage : ModNPC
             case State.SodaMissiles:
                 DoSodaMissiles();
                 break;
-        }
-        if (AIState == State.MailBoxes)
-        {
-            NPC.velocity.X = Lerp(NPC.velocity.X, Helper.FromAToB(NPC.Center, player.Center + Helper.FromAToB(player.Center, NPC.Center) * 70, false).X * 0.043f, 0.12f);
-            AITimer++;
-            if (AITimer == 20)
-                SoundEngine.PlaySound(SoundID.Zombie67, NPC.Center);
-            if (AITimer >= 20 && AITimer <= 40 && AITimer % 10 == 0)
-                MPUtils.NewProjectile(null, NPC.Center, Vector2.Zero, ProjectileType<GreenShockwave>(), 0, 0);
-
-            if (AITimer > 60 && AITimer < 82)
-            {
-                MPUtils.NewProjectile(NPC.GetSource_FromThis(), Helper.Raycast(NPC.Center - new Vector2(Main.rand.NextFloat(-2000, 2000), 200), Vector2.UnitY, 600, true).Point, Vector2.Zero, ProjectileType<Mailbox>(), 15, 0);
-            }
-            if (AITimer >= 120)
-            {
-                NPC.velocity = Vector2.Zero;
-                ResetTo(State.OpenLid, State.SpewFire2);
-                AITimer = -80;
-            }
+            
+            case State.MailBoxes:
+                DoMailBoxes();
+                break;
         }
         if (AIState == State.SateliteLightning)
         {

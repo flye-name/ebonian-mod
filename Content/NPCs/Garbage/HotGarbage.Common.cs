@@ -62,7 +62,8 @@ public partial class HotGarbage : ModNPC
         BoostWarning,
         Boost,
         Open,
-        Close
+        Close,
+        Constipated
     }
 
     public AnimationStyles AnimationStyle;

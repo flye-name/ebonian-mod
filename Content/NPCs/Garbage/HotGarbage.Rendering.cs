@@ -132,6 +132,11 @@ public partial class HotGarbage : ModNPC
                         NPC.frame.Y -= frameHeight;
                     }
                     break;
+                
+                case AnimationStyles.Constipated:
+                    NPC.frame.Y = 0;
+                    NPC.frame.X = 160;
+                    break;
             }
         }
     }

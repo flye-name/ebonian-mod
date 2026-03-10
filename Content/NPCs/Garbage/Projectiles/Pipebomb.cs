@@ -38,10 +38,8 @@ public class Pipebomb : ModProjectile
         for (int i = 0; i < Projectile.oldPos.Count(); i++)
         {
             float mult = (1 - i * fadeMult);
-            Main.spriteBatch.Draw(tex, Projectile.oldPos[i] + Projectile.Size / 2 - Main.screenPosition, null, Color.Maroon * (mult * 0.8f), Projectile.oldRot[i], tex.Size() / 2, Projectile.scale * 1.1f, SpriteEffects.None, 0);
+            Main.spriteBatch.Draw(tex, Projectile.oldPos[i] + Projectile.Size / 2 - Main.screenPosition, null, Color.Maroon * (mult * 0.8f), Projectile.oldRot[i], tex.Size() / 2, Projectile.scale * .9f, SpriteEffects.None, 0);
         }
-
-        Main.spriteBatch.Draw(tex, Projectile.Center - Main.screenPosition, null, Color.Maroon * (0.5f), Projectile.rotation, tex.Size() / 2, Projectile.scale * (1 + (MathF.Sin(Main.GlobalTimeWrappedHourly * 3f) + 1) * 0.5f), SpriteEffects.None, 0);
         Main.spriteBatch.Reload(BlendState.AlphaBlend);
         return true;
     }
@@ -84,16 +82,16 @@ public class Pipebomb : ModProjectile
             Projectile.velocity = Vector2.Zero;
         }
         Dust.NewDustPerfect(Projectile.Center - new Vector2(-8, 15).RotatedBy(Projectile.rotation), DustID.Torch);
-        if (Projectile.timeLeft < 30 && !shouldDie)
+        if (Projectile.timeLeft < 40 && !shouldDie)
         {
             Projectile.netUpdate = true;
-            MPUtils.NewProjectile(NPC.InheritSource(Projectile), Projectile.Center, Vector2.Zero, ProjectileType<CircleTelegraph>(), 0, 0);
+            MPUtils.NewProjectile(NPC.InheritSource(Projectile), Projectile.Center, Vector2.Zero, ProjectileType<ChargeUp>(), 0, 0, ai2: 0.4f);
             Projectile.velocity = Vector2.Zero;
             shouldDie = true;
         }
     }
     public override void OnKill(int timeLeft)
     {
-        Projectile.NewProjectile(Projectile.InheritSource(Projectile), Projectile.Center, Vector2.Zero, ProjectileType<FlameExplosionWSprite>(), Projectile.damage, 0, Projectile.owner);
+        Projectile.NewProjectile(Projectile.InheritSource(Projectile), Projectile.Center, Vector2.Zero, ProjectileType<FlameExplosionWSpriteHostile>(), Projectile.damage, 0, Projectile.owner);
     }
 }

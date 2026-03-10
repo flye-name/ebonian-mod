@@ -377,4 +377,35 @@ public partial class HotGarbage : ModNPC
 		if (AITimer >= 60)
 			ResetTo(State.MailBoxes, null, true);
 	}
+
+	void DoMailBoxes()
+	{
+		AITimer++;
+		FacePlayer();
+		AnimationStyle = AnimationStyles.Idle;
+		
+		if (AITimer == 20)
+		{
+			SoundEngine.PlaySound(SoundID.Zombie67, NPC.Center);
+		}
+
+		
+		if (AITimer is >= 20 and <= 50)
+		{
+			AnimationStyle = AnimationStyles.Constipated;
+			if (AITimer % 10 == 0)
+				MPUtils.NewProjectile(null, NPC.Center - new Vector2(0, 20), -Vector2.UnitY, ProjectileType<GarbageTechTelegraph>(), 0, 0, ai1: AITimer / 30f);
+		}
+
+		if (AITimer > 60 && AITimer < 82)
+		{
+			MPUtils.NewProjectile(NPC.GetSource_FromThis(), Helper.Raycast(NPC.Center - new Vector2(Main.rand.NextFloat(-2000, 2000), 200), Vector2.UnitY, 600, true).Point, Vector2.Zero, ProjectileType<Mailbox>(), 15, 0);
+		}
+		if (AITimer >= 120)
+		{
+			NPC.velocity = Vector2.Zero;
+			ResetTo(State.OpenLid, State.SpewFire2);
+			AITimer = -80;
+		}
+	}
 }
