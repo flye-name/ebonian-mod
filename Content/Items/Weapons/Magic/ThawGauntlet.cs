@@ -9,7 +9,7 @@ public class ThawGauntlet : ModItem
     {
         Item.damage = 20;
         Item.DamageType = DamageClass.Magic;
-        Item.mana = 15;
+        Item.mana = 10;
         Item.noUseGraphic = true;
         Item.noMelee = true;
         Item.crit = -4;
