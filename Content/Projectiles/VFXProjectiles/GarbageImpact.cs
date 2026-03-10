@@ -1,4 +1,6 @@
-﻿namespace EbonianMod.Content.Projectiles.VFXProjectiles;
+﻿using EbonianMod.Content.Dusts;
+
+namespace EbonianMod.Content.Projectiles.VFXProjectiles;
 
 public class GarbageImpact : ModProjectile
 {
@@ -25,8 +27,7 @@ public class GarbageImpact : ModProjectile
         seed = Main.rand.Next(int.MaxValue);
         for (int k = 0; k < 50; k++)
         {
-            Dust.NewDustPerfect(Projectile.Center, DustID.Torch, Main.rand.NextVector2Unit(-MathHelper.Pi, MathHelper.Pi) * Main.rand.NextFloat(1, 30), 0, default, Main.rand.NextFloat(1, 3)).noGravity = true;
-            Dust.NewDustPerfect(Projectile.Center, DustID.Ash, Main.rand.NextVector2Unit(-MathHelper.Pi, MathHelper.Pi) * Main.rand.NextFloat(1, 30), 100, default, Main.rand.NextFloat(1, 2)).noGravity = true;
+            Dust.NewDustPerfect(Projectile.Center, DustType<GarbageFlameDust>(), Main.rand.NextVector2Unit(-MathHelper.Pi, MathHelper.Pi) * Main.rand.NextFloat(1, 30), 0, Color.OrangeRed, Main.rand.NextFloat(0.02f, 0.1f)).noGravity = true;
         }
     }
     public override bool PreDraw(ref Color lightColor)
