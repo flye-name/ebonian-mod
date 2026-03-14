@@ -14,13 +14,22 @@ public class MiscPlayer : ModPlayer
     public override void PreUpdateMovement()
     {
         if (fleshformators > 0)
+            Player.gravDir = 1f;
+    }
+
+    public override bool PreItemCheck()
+    {
+        if (fleshformators > 0)
         {
             Player.controlUseItem = false;
             Player.controlUseTile = false;
             Player.controlThrow = false;
-            Player.gravDir = 1f;
+            return false;
         }
+
+        return base.PreItemCheck();
     }
+
     public override void PostUpdateMiscEffects()
     {
         consistentTimer++;
