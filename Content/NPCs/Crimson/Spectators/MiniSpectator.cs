@@ -53,6 +53,12 @@ public class MiniSpectator : ModNPC
         NPC.hide = true;
         NPC.chaseable = false;
     }
+
+    public override void ModifyNPCLoot(NPCLoot npcLoot)
+    {
+        npcLoot.Add(ItemDropRule.Common(ItemID.Lens, 2));
+    }
+
     Verlet verlet;
     public override void DrawBehind(int index)
     {

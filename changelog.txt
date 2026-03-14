@@ -31,6 +31,7 @@ v3.0
 - Updated the Hookworm's coin drops, bestiary, and added a chance for it to drop a Whoopie Cushion
 - Rotten Spine now only fires if the player is in its line of sight
 - Moved the Bloodsucker to the Blood Moon
+- Spectators now have a chance to drop lenses
 - Decreased the size of the Century Flower's spore hitbox
 - Small Spectators are no longer targeted by minions
 - Starlads now always drop one singular fallen star, and increased the chance for them to drop mushrooms

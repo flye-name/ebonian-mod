@@ -41,6 +41,7 @@ public class MassiveSpectator : ModNPC
     public override void ModifyNPCLoot(NPCLoot npcLoot)
     {
         npcLoot.Add(ItemDropRule.Common(ItemType<Panopticon>(), 40));
+        npcLoot.Add(ItemDropRule.Common(ItemID.Lens, 2));
     }
     public override void SetDefaults()
     {
