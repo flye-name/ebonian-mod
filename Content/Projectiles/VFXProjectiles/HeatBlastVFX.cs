@@ -27,22 +27,29 @@ public class HeatBlastVFX : ModProjectile
         Texture2D tex1 = Assets.Extras.Extras2.light_01.Value;
         Texture2D tex2 = Assets.Extras.Extras2.scorch_03.Value;
         Texture2D tex3 = Assets.Extras.circlething.Value;
-        Main.spriteBatch.Reload(BlendState.Additive);
-        float alpha = MathHelper.Lerp(1, 0, Projectile.ai[0]);
-        Main.spriteBatch.Reload(Effects.SpriteRotation.Value);
-        Vector2 scale = new Vector2(0.25f, 1);
-        Effects.SpriteRotation.Value.Parameters["scale"].SetValue(scale * 0.75f);
-        Effects.SpriteRotation.Value.Parameters["rotation"].SetValue(-Main.GameUpdateCount * 0.003f);
-        Effects.SpriteRotation.Value.Parameters["uColor"].SetValue(Color.OrangeRed.ToVector4() * alpha);
-        for (int i = 0; i < 5; i++)
+        
+        GarbageFlameRendering.DrawCache.Add(() =>
         {
-            float s = Projectile.ai[0] * (i * 2) * 0.2f;
-            Main.spriteBatch.Draw(tex1, Projectile.Center + Projectile.velocity * i * 3 * (10 * s) - Main.screenPosition, null, Color.White * 0.4f, Projectile.velocity.ToRotation(), tex1.Size() / 2, s * 2, SpriteEffects.None, 0);
-            Main.spriteBatch.Draw(tex2, Projectile.Center + Projectile.velocity * i * 4 * (10 * s) - Main.screenPosition, null, Color.White, Projectile.velocity.ToRotation(), tex2.Size() / 2, s * 1.5f * 2, SpriteEffects.None, 0);
-            Main.spriteBatch.Draw(tex3, Projectile.Center + Projectile.velocity * i * 5 * (10 * s) - Main.screenPosition, null, Color.White, Projectile.velocity.ToRotation(), tex3.Size() / 2, s * 0.9f * 2, SpriteEffects.None, 0);
-        }
-        Main.spriteBatch.Reload(effect: null);
-        Main.spriteBatch.Reload(BlendState.AlphaBlend);
+            float alpha = MathHelper.Lerp(1, 0, Projectile.ai[0]);
+            Main.spriteBatch.Reload(Effects.SpriteRotation.Value);
+            Vector2 scale = new Vector2(0.25f, 1);
+            Effects.SpriteRotation.Value.Parameters["scale"].SetValue(scale * 0.75f);
+            Effects.SpriteRotation.Value.Parameters["rotation"].SetValue(-Main.GameUpdateCount * 0.003f);
+            Effects.SpriteRotation.Value.Parameters["uColor"].SetValue(Color.OrangeRed.ToVector4() * alpha);
+            for (int i = 0; i < 5; i++)
+            {
+                float s = Projectile.ai[0] * (i * 2.5f) * 0.2f;
+                Main.spriteBatch.Draw(tex1,
+                    Projectile.Center + Projectile.velocity * i * 3 * (5 * s) - Main.screenPosition, null,
+                    Color.White * 0.4f, Projectile.velocity.ToRotation(), tex1.Size() / 2, s , SpriteEffects.None,
+                    0);
+                Main.spriteBatch.Draw(tex2,
+                    Projectile.Center + Projectile.velocity * i * 4 * (5 * s) - Main.screenPosition, null, Color.White,
+                    Projectile.velocity.ToRotation(), tex2.Size() / 2, s * 1.5f, SpriteEffects.None, 0);
+            }
+
+            Main.spriteBatch.Reload(effect: null);
+        });
         return false;
     }
     public override void AI()

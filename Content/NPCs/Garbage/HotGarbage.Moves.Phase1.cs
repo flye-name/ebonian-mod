@@ -532,4 +532,147 @@ public partial class HotGarbage : ModNPC
 			ResetTo(State.OpenLid, State.GiantFireball);
 		}
 	}
+
+    void DoMassiveLaser()
+    {
+        AnimationStyle = AnimationStyles.BoostWarning;
+        if (AITimer > 25 && NPC.velocity.Length() > 4f)
+            AnimationStyle = AnimationStyles.Boost;
+        
+        AITimer++;
+
+        Vector2 thrusterPosition = NPC.Center + new Vector2(NPC.width * -NPC.direction * 0.52f, 4).RotatedBy(NPC.rotation);
+        if (AITimer < 100)
+        {
+	        if (AITimer > 45)
+	        {
+		        thrusterFlareAlpha = MathHelper.Lerp(thrusterFlareAlpha, 1, 0.1f);
+		        
+		        NPC.rotation += ToRadians(-0.9f * 5.6f * NPC.direction);
+		        float progress = (AITimer - 45f) / 55f;
+		        Vector2 velocity = new Vector2(NPC.direction * MathHelper.Lerp(0.5f, 1f, progress), 0).RotatedBy(NPC.rotation);
+		        Vector2 newVelocity = velocity * progress * 120;
+		        NPC.velocity = new Vector2(MathHelper.Lerp(NPC.velocity.X, newVelocity.X * 0.3f, progress), newVelocity.Y * 1.4f);
+
+		        NPC.noTileCollide = true;
+	        }
+	        else
+	        {
+		        if (AITimer % 15 == 0)
+			        MPUtils.NewProjectile(NPC.InheritSource(NPC), thrusterPosition, -NPC.rotation.ToRotationVector2() * new Vector2(NPC.direction, 0), ProjectileType<HeatBlastVFX>(), 0, 0);
+
+		        if (AITimer < 25)
+					thrusterFlareAlpha = MathHelper.Lerp(thrusterFlareAlpha, 0.5f, 0.1f);
+		        else 
+			        thrusterFlareAlpha = MathHelper.Lerp(thrusterFlareAlpha, 0.75f, 0.05f);
+		        
+		        if (AITimer < 2)
+					FacePlayer();
+		        NPC.velocity.X = NPC.direction * AITimer * 0.1f;
+		        Phase();
+	        }
+        }
+        else
+        {
+	        NPC.noTileCollide = false;
+	        if (AITimer < 200)
+				NPC.rotation = Utils.AngleLerp(NPC.rotation, PiOver2 * NPC.direction, 0.2f);
+        }
+
+        Phase();
+
+        if (AITimer > 90 && (int)AITimer3 != 3)
+        {
+            NPC.damage = 60;
+            DisposablePosition = NPC.Center;
+            NPC.velocity.X *= 0.9f;
+	        NPC.velocity.Y += 1;
+	        NPC.Center += Vector2.UnitY * MathHelper.Clamp(NPC.velocity.Y, 0, 20);
+        }
+        
+        bool colliding = NPC.Grounded(0.95f);
+        if (colliding && AITimer > 100 && AITimer < 360)
+        {
+            if ((int)AITimer3 != 3)
+            {
+                DisposablePosition = NPC.Center + new Vector2(0, NPC.height * 0.5f);
+                AITimer3 = 3;
+                for (int i = 0; i < 4; i++)
+                    MPUtils.NewProjectile(NPC.InheritSource(NPC), NPC.Center + Main.rand.NextVector2Circular(15, 15), Vector2.Zero, ProjectileType<FlameExplosionWSpriteHostile>(), 17, 0);
+	            MPUtils.NewProjectile(NPC.InheritSource(NPC), NPC.Center, Vector2.Zero, ProjectileType<GarbageImpact>(), 0, 0);
+            }
+            else
+            {
+	            if (DisposablePosition.Distance(NPC.Center) < 1000f)
+					NPC.Center = Vector2.Lerp(NPC.Center, DisposablePosition + Main.rand.NextVector2Circular(AITimer2 * 10f, AITimer2), 0.2f);
+                NPC.velocity = Vector2.Zero;
+            }
+            if (AITimer % 3 - (int)AITimer2 == 0)
+            {
+                Vector2 pos = NPC.Center - new Vector2(Main.rand.NextFloat(-NPC.width, NPC.width) * 0.7f, NPC.height * 0.3f);
+                Dust.NewDustPerfect(pos, DustType<GarbageFlameDust>(), -Vector2.UnitY.RotatedByRandom(0.6f) * Main.rand.NextFloat(10, 15), newColor: Color.OrangeRed, Scale: Main.rand.NextFloat(0.105f, 0.25f));
+            }
+        }
+
+        if (AITimer is > 100 and < 340 && AITimer % 25 == 0)
+        {
+	        MPUtils.NewProjectile(null, thrusterPosition, -Vector2.UnitY.RotatedByRandom(0.85f) * Main.rand.NextFloat(10, 20), ProjectileType<GarbageGiantFlame>(), 15, 0, ai2: 1);
+        }
+        
+        if (AITimer == 80)
+        {
+            SoundEngine.PlaySound(Sounds.eruption.WithVolumeScale(0.8f), NPC.Center);
+            if (!Main.dedServ)
+                LaserSoundSlot = SoundEngine.PlaySound(Sounds.garbageLaser.WithVolumeScale(1.35f), NPC.Center);
+            CameraSystem.ScreenShakeAmount = 5;
+            AITimer2 = 1;
+            MPUtils.NewProjectile(NPC.InheritSource(NPC), NPC.Center - new Vector2(-6 * NPC.direction, NPC.height * 0.75f), -Vector2.UnitY, ProjectileType<HeatBlastVFX>(), 0, 0);
+            MPUtils.NewProjectile(NPC.InheritSource(NPC), NPC.Center, -Vector2.UnitY, ProjectileType<GarbageLaserSmall1>(), 100, 0, ai0: NPC.whoAmI);
+        }
+        if (AITimer == 180)
+        {
+            if (!Main.dedServ)
+                if (SoundEngine.TryGetActiveSound(LaserSoundSlot, out var sound))
+                {
+                    sound.Pitch += 0.3f;
+                    sound.Volume += 0.3f;
+                }
+            CameraSystem.ScreenShakeAmount = 10;
+            AITimer2 = 1.5f;
+            MPUtils.NewProjectile(NPC.InheritSource(NPC), NPC.Center - new Vector2(-6 * NPC.direction, NPC.height * 0.75f), -Vector2.UnitY, ProjectileType<HeatBlastVFX>(), 0, 0);
+        }
+        if (AITimer == 240)
+        {
+            if (!Main.dedServ)
+                if (SoundEngine.TryGetActiveSound(LaserSoundSlot, out var sound))
+                {
+                    sound.Pitch += 0.4f;
+                    sound.Volume += 0.4f;
+                }
+            CameraSystem.ScreenShakeAmount = 15;
+            AITimer2 = 2.25f;
+            MPUtils.NewProjectile(NPC.InheritSource(NPC), NPC.Center - new Vector2(-6 * NPC.direction, NPC.height * 0.75f), -Vector2.UnitY, ProjectileType<HeatBlastVFX>(), 0, 0);
+        }
+        
+        if (AITimer == 340)
+            MPUtils.NewProjectile(null, NPC.Center - new Vector2(6 * NPC.direction, 40), -Vector2.UnitY * 10, ProjectileType<GarbageGiantFlame>(), 20, 0, ai2: 1);
+        
+        if (AITimer >= 400)
+        {
+	        NPC.rotation = Utils.AngleLerp(NPC.rotation, 0, 0.1f);
+	        thrusterFlareAlpha = MathHelper.Lerp(thrusterFlareAlpha, 0, 0.1f);
+        }
+
+        if (AITimer >= 440)
+        {
+            if (!Main.dedServ)
+                if (SoundEngine.TryGetActiveSound(LaserSoundSlot, out var sound))
+                {
+                    sound.Stop();
+                }
+            NPC.velocity = Vector2.Zero;
+            ResetTo(State.WarningForDash);
+            PerformedFullMoveset = true;
+        }
+    }
 }

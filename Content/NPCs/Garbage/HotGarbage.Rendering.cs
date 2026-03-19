@@ -9,10 +9,10 @@ public partial class HotGarbage : ModNPC
         Texture2D glow = Assets.NPCs.Garbage.HotGarbage_Glow.Value;
         Texture2D fire = Assets.NPCs.Garbage.HotGarbage_Fire.Value;
         Texture2D fireball = Assets.Extras.fireball.Value;
-        Vector2 origin = new Vector2((drawTexture.Width / 3) * 0.5F, (drawTexture.Height / Main.npcFrameCount[NPC.type]) * 0.5F);
+        Vector2 origin = new Vector2((drawTexture.Width / 3f) * 0.5f, (drawTexture.Height / (float)Main.npcFrameCount[NPC.type]) * 0.5f);
 
         Vector2 drawPos = new Vector2(
-            NPC.position.X - pos.X + (NPC.width / 3) - (TextureAssets.Npc[Type].Value.Width / 3) * NPC.scale / 3f + origin.X * NPC.scale,
+            NPC.position.X - pos.X + (NPC.width / 3f) - (TextureAssets.Npc[Type].Value.Width / 3f) * NPC.scale / 3f + origin.X * NPC.scale,
             NPC.position.Y - pos.Y + NPC.height - TextureAssets.Npc[Type].Value.Height * NPC.scale / Main.npcFrameCount[NPC.type] + 4f + origin.Y * NPC.scale + NPC.gfxOffY);
         drawPos.Y -= 2;
         SpriteEffects effects = NPC.spriteDirection == -1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
@@ -24,15 +24,28 @@ public partial class HotGarbage : ModNPC
 
         return false;
     }
+
+    private float thrusterFlareAlpha;
     public override void PostDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
     {
         Texture2D flame = Assets.NPCs.Garbage.HotGarbage_FlameOverlay.Value;
-        Vector2 origin = new Vector2((flame.Width / 3) * 0.5F, (flame.Height / Main.npcFrameCount[NPC.type]) * 0.5F);
+        Texture2D flare = TextureAssets.Extra[ExtrasID.SharpTears].Value;
+        Texture2D flare2 = Assets.Extras.crosslight.Value;
+        Vector2 origin = new Vector2((flame.Width / 3f) * 0.5f, (flame.Height / (float)Main.npcFrameCount[NPC.type]) * 0.5f);
 
-        Vector2 drawPos = new Vector2(
-            NPC.position.X + (NPC.width / 3) - (TextureAssets.Npc[Type].Value.Width / 3) * NPC.scale / 3f + origin.X * NPC.scale,
-            NPC.position.Y + NPC.height - TextureAssets.Npc[Type].Value.Height * NPC.scale / Main.npcFrameCount[NPC.type] + 4f + origin.Y * NPC.scale + NPC.gfxOffY);
+        if (thrusterFlareAlpha > 0)
+        {
+            GarbageFlameRendering.DrawCache.Add(() =>
+            {
+                Vector2 drawPos = new Vector2( NPC.position.X - screenPos.X + (NPC.width / 3f) - (TextureAssets.Npc[Type].Value.Width / 3f) * NPC.scale / 3f + origin.X * NPC.scale, NPC.position.Y - screenPos.Y + NPC.height - TextureAssets.Npc[Type].Value.Height * NPC.scale / Main.npcFrameCount[NPC.type] + 4f + origin.Y * NPC.scale + NPC.gfxOffY);
 
+                Vector2 position = drawPos + new Vector2(NPC.width * -NPC.direction * 0.6f, 4).RotatedBy(NPC.rotation) * NPC.scale;
+
+                spriteBatch.Draw(flare2, position, null, Color.OrangeRed * 0.75f * thrusterFlareAlpha, NPC.rotation, flare2.Size() / 2f, new Vector2(0.1f, thrusterFlareAlpha) * 0.85f, SpriteEffects.None, 0);
+                spriteBatch.Draw(flare2, position, null, Color.OrangeRed * 0.75f * thrusterFlareAlpha, NPC.rotation + PiOver2, flare2.Size() / 2f, new Vector2(0.1f, thrusterFlareAlpha) * 0.35f, SpriteEffects.None, 0);
+            });
+        }
+        
         SpriteEffects effects = NPC.spriteDirection == -1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
         SpritebatchParameters sbParams = spriteBatch.Snapshot();
         spriteBatch.End();

@@ -1,4 +1,5 @@
 using System;
+using EbonianMod.Content.Dusts;
 using EbonianMod.Content.NPCs.Garbage.Projectiles;
 using EbonianMod.Content.Projectiles.VFXProjectiles;
 using EbonianMod.Core.Systems.Cinematic;
@@ -44,6 +45,8 @@ public partial class HotGarbage : ModNPC
     {
         AnimationStyle = AnimationStyles.Idle;
         AITimer++;
+
+        thrusterFlareAlpha = 0;
         
         NPC.noTileCollide = false;
         NPC.dontTakeDamage = false;

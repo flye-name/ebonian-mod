@@ -18,8 +18,6 @@ public partial class HotGarbage : ModNPC
 
     public override void AI()
     {
-        NextAttack = State.PipeBombAirstrike;
-        
         AmbientFX();
 
         TargetingLogic();
@@ -77,140 +75,13 @@ public partial class HotGarbage : ModNPC
             case State.PipeBombAirstrike:
                 DoPipebombAirstrike();
                 break;
+            
+            case State.MassiveLaser:
+                DoMassiveLaser();
+                break;
         }
         
-        if (AIState == State.MassiveLaser)
-        {
-            AnimationStyle = AnimationStyles.BoostWarning;
-            if (AITimer > 25 && NPC.velocity.Length() > 4f)
-                AnimationStyle = AnimationStyles.Boost;
-            
-            AITimer++;
-            if (AITimer < 60)
-            {
-                NPC.velocity.X = 0;
-                if (AITimer < 40)
-                    NPC.velocity.Y = Lerp(NPC.velocity.Y, -30, 0.1f);
-                else
-                    NPC.velocity = Vector2.Lerp(NPC.velocity, Vector2.Zero, 0.3f);
-                if (AITimer > 40)
-                    NPC.rotation = Utils.AngleLerp(NPC.rotation, PiOver2 * NPC.direction, 0.05f);
-            }
-            if (AITimer == 60)
-                NPC.rotation = PiOver2 * NPC.direction;
-            if (AITimer > 60 && (int)AITimer3 != 3)
-            {
-                NPC.damage = 60;
-                DisposablePosition = NPC.Center;
-                if (NPC.velocity.Length() < 20)
-                    NPC.velocity.Y += 1 + NPC.velocity.Y;
-                NPC.Center += Vector2.UnitY * NPC.velocity.Y;
-            }
-            bool colliding = Helper.Raycast(NPC.Center, Vector2.UnitY, NPC.width * 0.6f).RayLength < NPC.width * 0.3f ||
-                Helper.Raycast(NPC.BottomRight, Vector2.UnitY, NPC.width * 0.6f).RayLength < NPC.width * 0.3f ||
-                Helper.Raycast(NPC.BottomLeft, Vector2.UnitY, NPC.width * 0.6f).RayLength < NPC.width * 0.3f;
-            if (colliding && AITimer > 60 && AITimer < 320)
-            {
-                if ((int)AITimer3 != 3)
-                {
-                    DisposablePosition = NPC.Center + new Vector2(0, NPC.height * 0.5f);
-                    AITimer3 = 3;
-                    for (int i = 0; i < 4; i++)
-                        MPUtils.NewProjectile(NPC.InheritSource(NPC), NPC.Center + Main.rand.NextVector2Circular(15, 15), Vector2.Zero, ProjectileType<FlameExplosionWSpriteHostile>(), 0, 0);
-                    Projectile hit = MPUtils.NewProjectile(NPC.InheritSource(NPC), NPC.Center, Vector2.Zero, ProjectileType<FatSmash>(), 0, 0);
-                    if (hit is not null)
-                    {
-                        hit.scale = Main.rand.NextFloat(0.4f, 0.7f);
-                        hit.SyncProjectile();
-                    }
-                }
-                else
-                {
-                    NPC.Center = Vector2.Lerp(NPC.Center, DisposablePosition + Main.rand.NextVector2Circular(AITimer2 * 10f, AITimer2), 0.2f);
-                    NPC.velocity = Vector2.Zero;
-                }
-                if (AITimer % 3 - (int)AITimer2 == 0)
-                {
-                    Vector2 pos = NPC.Center + new Vector2(Main.rand.NextFloat(-NPC.width, NPC.width) * 0.7f, NPC.height * 0.3f);
-                    Dust.NewDustPerfect(pos, DustType<LineDustFollowPoint>(), Helper.FromAToB(NPC.Center, pos) * Main.rand.NextFloat(10, 15),
-                        newColor: Color.OrangeRed, Scale: Main.rand.NextFloat(0.105f, 0.25f)).customData = NPC.Center - new Vector2(0, 100);
-                }
-            }
-            if (AITimer == 300)
-                MPUtils.NewProjectile(null, NPC.Center - new Vector2(6 * NPC.direction, 40), -Vector2.UnitY * 10, ProjectileType<GarbageGiantFlame>(), 20, 0, ai2: 1);
-            if (AITimer > 100 && AITimer < 300 && AITimer % 20 == 0)
-            {
-                CameraSystem.ScreenShakeAmount = 5 * AITimer2;
-                for (int i = 0; i < 3; i++)
-                {
-                    MPUtils.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(Main.rand.NextFloat(-15, 15), -40), new Vector2(NPC.direction * Main.rand.NextFloat(-10, 10), -6 - Main.rand.NextFloat(2, 4)), ProjectileType<GarbageFlame>(), 15, 0);
-                }
-                MPUtils.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(Main.rand.NextFloat(-15, 15), -40), new Vector2(NPC.direction * Main.rand.NextFloat(-6, 6) * AITimer2, -6 - Main.rand.NextFloat(3, 5) * AITimer2), ProjectileType<GarbageFlame>(), 15, 0);
-            }
-            if (AITimer == 5)
-            {
-                SoundEngine.PlaySound(SoundID.Zombie66, NPC.Center);
-                MPUtils.NewProjectile(NPC.InheritSource(NPC), NPC.Center, -Vector2.UnitY, ProjectileType<GarbageTelegraph>(), 0, 0);
-            }
-            if (AITimer == 40)
-                MPUtils.NewProjectile(NPC.InheritSource(NPC), NPC.Center, Vector2.UnitY, ProjectileType<GarbageTelegraph>(), 0, 0);
-
-            if (AITimer == 60)
-            {
-                SoundEngine.PlaySound(Sounds.eruption.WithVolumeScale(0.8f), NPC.Center);
-                if (!Main.dedServ)
-                    LaserSoundSlot = SoundEngine.PlaySound(Sounds.garbageLaser.WithVolumeScale(1.35f), NPC.Center);
-                CameraSystem.ScreenShakeAmount = 5;
-                AITimer2 = 1;
-                MPUtils.NewProjectile(NPC.InheritSource(NPC), NPC.Center - new Vector2(-6 * NPC.direction, NPC.height * 0.75f), -Vector2.UnitY, ProjectileType<HeatBlastVFX>(), 0, 0);
-                MPUtils.NewProjectile(NPC.InheritSource(NPC), NPC.Center, -Vector2.UnitY, ProjectileType<GarbageLaserSmall1>(), 100, 0, ai0: NPC.whoAmI);
-            }
-            if (AITimer == 140)
-            {
-                if (!Main.dedServ)
-                    if (SoundEngine.TryGetActiveSound(LaserSoundSlot, out var sound))
-                    {
-                        sound.Pitch += 0.3f;
-                        sound.Volume += 0.3f;
-                    }
-                CameraSystem.ScreenShakeAmount = 10;
-                AITimer2 = 1.5f;
-                MPUtils.NewProjectile(NPC.InheritSource(NPC), NPC.Center - new Vector2(-6 * NPC.direction, NPC.height * 0.75f), -Vector2.UnitY, ProjectileType<HeatBlastVFX>(), 0, 0);
-                MPUtils.NewProjectile(NPC.InheritSource(NPC), NPC.Center, -Vector2.UnitY, ProjectileType<GarbageLaserSmall2>(), 100, 0, ai0: NPC.whoAmI);
-            }
-            if (AITimer == 200)
-            {
-                if (!Main.dedServ)
-                    if (SoundEngine.TryGetActiveSound(LaserSoundSlot, out var sound))
-                    {
-                        sound.Pitch += 0.4f;
-                        sound.Volume += 0.4f;
-                    }
-                CameraSystem.ScreenShakeAmount = 15;
-                AITimer2 = 2.25f;
-                MPUtils.NewProjectile(NPC.InheritSource(NPC), NPC.Center - new Vector2(-6 * NPC.direction, NPC.height * 0.75f), -Vector2.UnitY, ProjectileType<HeatBlastVFX>(), 0, 0);
-                MPUtils.NewProjectile(NPC.InheritSource(NPC), NPC.Center, -Vector2.UnitY, ProjectileType<GarbageLaserSmall3>(), 100, 0, ai0: NPC.whoAmI);
-            }
-            if (AITimer > 200 && AITimer < 320)
-            {
-                for (float i = 0; i < 0.99f; i += 0.33f)
-                    Helper.DustExplosion(NPC.Center - new Vector2(6, NPC.height * 0.2f), Vector2.One, 2, Color.Gray * 0.1f, false, false, 0.1f, 0.125f, -Vector2.UnitY.RotatedByRandom(PiOver4 * i) * Main.rand.NextFloat(2f, 8f));
-            }
-            if (AITimer >= 360)
-                NPC.rotation = Utils.AngleLerp(NPC.rotation, 0, 0.1f);
-            if (AITimer >= 400)
-            {
-                if (!Main.dedServ)
-                    if (SoundEngine.TryGetActiveSound(LaserSoundSlot, out var sound))
-                    {
-                        sound.Stop();
-                    }
-                NPC.velocity = Vector2.Zero;
-                ResetTo(State.WarningForDash);
-                PerformedFullMoveset = true;
-            }
-        }
-        else if (AIState == State.SummonDrones)
+        if (AIState == State.SummonDrones)
         {
             AITimer++;
             if (AITimer == 10)

@@ -61,6 +61,18 @@ public partial class HotGarbage : ModNPC
             Vector2 position = NPC.Bottom + new Vector2(-NPC.width / 2f + Main.rand.Next(wheelOffsets), -2) * NPC.direction + Main.rand.NextVector2Circular(2, 5);
             Dust.NewDustPerfect(position, ModContent.DustType<LineDustFollowPoint>(), new Vector2(MathHelper.Clamp(-NPC.velocity.X * 0.5f, -3f, 3f), Main.rand.NextFloat(-1.5f, -0.5f)), newColor: Color.OrangeRed, Scale: 0.08f).noGravity = true;
         }
+
+        if (thrusterFlareAlpha > 0f)
+        {
+            Vector2 basePosition = NPC.Center + new Vector2(NPC.width * -NPC.direction * 0.52f, 4).RotatedBy(NPC.rotation);
+            for (int i = 0; i < 3 * thrusterFlareAlpha; i++) 
+            {
+                Vector2 position = basePosition + new Vector2(NPC.direction * Main.rand.NextFloat(-170, -20) * thrusterFlareAlpha, 0).RotatedBy(NPC.rotation).RotatedByRandom(thrusterFlareAlpha);
+                Dust.NewDustPerfect(position, DustType<LineDustFollowPoint>(), position.DirectionTo(basePosition) * Main.rand.NextFloat(5, 10), newColor: Color.OrangeRed, Scale: Main.rand.NextFloat(0.08f, 0.12f)).customData = basePosition;
+                
+                Dust.NewDustPerfect(basePosition, DustType<GarbageFlameDust>(), basePosition.DirectionTo(position) * Main.rand.NextFloat(5, 10), newColor: Color.OrangeRed, Scale: Main.rand.NextFloat(0.08f, 0.12f));
+            }
+        }
         
         if (RedFrames.Contains(new(NPC.frame.X, NPC.frame.Y)))
             Lighting.AddLight(NPC.Center, TorchID.Red);
