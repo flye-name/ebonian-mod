@@ -30,6 +30,7 @@ public class TinyBrain : ModNPC //the class name is a reference to my brain.
         NPC.noTileCollide = true;
         NPC.lifeMax = 400;
         NPC.friendly = true;
+        NPC.npcSlots = 0;
         NPC.dontTakeDamage = false;
     }
     public override void OnHitByProjectile(Projectile projectile, NPC.HitInfo hitinfo, int damage)

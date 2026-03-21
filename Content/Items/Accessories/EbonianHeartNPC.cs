@@ -28,6 +28,7 @@ public class EbonianHeartNPC : ModNPC
         NPC.knockBackResist = 0;
         NPC.npcSlots = 0;
         NPC.aiStyle = 0;
+        NPC.npcSlots = 0;
         NPC.noGravity = true;
         NPC.noTileCollide = true;
         NPC.lifeMax = 69420;

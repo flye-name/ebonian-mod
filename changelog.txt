@@ -27,6 +27,7 @@ v3.0
 - Removed the Bloodsoaked Dentures' recipe
 - Changed the Defibrillator's recipe
 - Adjusted the amount of materials used in certain recipes 
+- Seeping Brain and Rotten Heart no longer lower enemy spawns
 
 ## Changes to Bosses:
 - Reworked Hot Garbage
