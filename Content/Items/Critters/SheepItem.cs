@@ -23,8 +23,12 @@ public class SheepItemNaked : ModItem
     }
     public override bool? UseItem(Player player)
     {
-        if (player.whoAmI == Main.myPlayer)
-            MPUtils.NewNPC(Main.MouseWorld, NPCType<Sheep>(), ai2: 1);
-        return base.UseItem(player);
+        if (player.whoAmI == Main.myPlayer && player.IsInTileInteractionRange(Main.MouseWorld.ToTileCoordinates().X, Main.MouseWorld.ToTileCoordinates().Y, TileReachCheckSettings.Simple))
+        {
+            MPUtils.NewNPC(Main.MouseWorld, NPCType<Sheep>(), ai3: 10);
+            return true;
+        }
+
+        return false;
     }
 }

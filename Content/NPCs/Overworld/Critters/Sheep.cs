@@ -114,15 +114,13 @@ public class Sheep : ModNPC
     private float eatingVfxOffset;
     public override void AI()
     {
+        if (NPC.ai[3] > 0)
+            sheared = true;
+        
         NPC.spriteDirection = NPC.direction;
         if (!spawn)
         {
-            if (NPC.ai[2] > 0)
-            {
-                sheared = true;
-                NPC.ai[2] = 0;
-            }
-            else if (Main.netMode < 1)
+            if (NPC.ai[3] <= 0 && Main.netMode < 1)
             {
                 WeightedRandom<int> dye = new();
                 dye.Add(ItemID.PinkDye, 0.01f);
