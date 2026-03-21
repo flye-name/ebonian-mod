@@ -9,12 +9,15 @@ v3.0
 - Changed the way some special effects were rendered, fixing an issue where they would lag behind one frame
 - Made the River of Starlight event rarer and not occur during blood moons or invasions
 - Made the River of Starlight's unique fallen stars rarer
+- The River of Starlight giant stars now don't always spawn herders, as intended
 - Toned down the River of Starlight's visuals
 - Made some music tracks quieter
 - Nerfed the Jetpack Boulder movement
 - The Jetpack Boulder now despawns if the player is too far away
 
 ## Changes to Items:
+- Kodama Staff is now correctly obtainable
+- Starbit is now correctly obtainable
 - Decreased the chance for giant fallen stars to drop special items
 - Increased the Cold Touch's mana usage
 - Buffed the Warding Star, Botanist Staff

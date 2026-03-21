@@ -94,7 +94,7 @@ public class AsteroidHerder : CommonNPC
     public override void ModifyNPCLoot(NPCLoot npcLoot)
     {
         npcLoot.Add(ItemDropRule.Common(ItemType<LilPilgI>(), 40));
-        npcLoot.Add(ItemDropRule.Common(8, ItemType<StarBit>()));
+        npcLoot.Add(ItemDropRule.Common(ItemType<StarBit>(), 8));
     }
     public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
     {
