@@ -24,12 +24,12 @@ public class Terrorhead : ModItem
         return body.type == ItemType<Terrorbody>() && legs.type == ItemType<Terrorlegs>();
     }
     public const float DmgIncrease = 0.06f;
-    public const int ManaIncrease = 100;
-    public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(DmgIncrease * 100, ManaIncrease);
+    public const float CritIncrease = 0.025f;
+    public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(DmgIncrease * 100, CritIncrease * 100);
     public override void UpdateEquip(Player player)
     {
         player.magicDamage += DmgIncrease;
-        player.statManaMax2 += ManaIncrease;
+        player.magicCrit += CritIncrease;
     }
     public override void UpdateArmorSet(Player player)
     {
@@ -49,12 +49,13 @@ public class Terrorbody : ModItem
         Item.defense = 16;
         Item.rare = ItemRarityID.LightRed;
     }
-    public const float DmgIncrease = 0.07f, CritIncrease = 0.025f;
-    public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(DmgIncrease * 100, CritIncrease * 100);
+    public const float DmgIncrease = 0.07f;
+    public const int ManaIncrease = 100;
+    public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(DmgIncrease * 100, ManaIncrease);
     public override void UpdateEquip(Player player)
     {
         player.magicDamage += DmgIncrease;
-        player.magicCrit += CritIncrease;
+        player.statManaMax2 += ManaIncrease;
     }
     public override void AddRecipes()
     {
