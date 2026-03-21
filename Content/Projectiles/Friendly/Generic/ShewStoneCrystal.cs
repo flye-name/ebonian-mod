@@ -32,10 +32,12 @@ namespace EbonianMod.Content.Projectiles.Friendly.Generic
             if (Main.myPlayer == Projectile.owner)
             {
                 Vector2 velocity = Helper.FromAToB(Projectile.Center, Main.MouseWorld);
-                if (!Helper.Raycast(Projectile.Center, velocity, 25).Success)
+
+                if (!Helper.Raycast(Projectile.Center, velocity, 60).Success)
                     Projectile.velocity = velocity * oldVelocity.Length();
                 else
                     Projectile.velocity = -oldVelocity;
+                
                 Projectile.netUpdate = true;
             }
             return false;
