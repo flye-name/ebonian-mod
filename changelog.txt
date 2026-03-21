@@ -56,6 +56,7 @@ v3.0
 - Starlads, Asteriod Wardens, Asteriod Herders, and Belladonnas now scale their stats properly
 - Fixed the Defibrillator's VFX being weirdly flat
 - Fixed Cecitior's chomping attack rotating incorrectly
+- Fixed the Sheepening sheep not despawning once the player dies
 - Fixed the Cold Touch spawning incorrectly
 - Fixed Fleshformators still allowing you to use items when grabbing you
 - Fixed "Sounds/GenericExplosion" being missing

@@ -44,7 +44,7 @@ public class SheepeningPlayerProjectile : ModProjectile
     public override void AI()
     {
         Player player = Main.player[Projectile.owner];
-        if (player.GetModPlayer<SheepPlayer>().sheep && player.active)
+        if (player.GetModPlayer<SheepPlayer>().sheep && player.active && !player.dead)
             Projectile.timeLeft = Projectile.extraUpdates * 10;
         Projectile.Center = player.Bottom + new Vector2(0, -Projectile.height / 2);
         Projectile.direction = Projectile.spriteDirection = player.direction;
