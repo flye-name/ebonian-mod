@@ -240,6 +240,7 @@ public class ArchmageX : CommonNPC
     float headRotation, headYOff, headOffIncrementOffset;
     float manaPotAlpha, staffAlpha = 1f, bigStaffAlpha, bigStaffBloomAlpha, heliAlpha, arenaVFXOffset, arenaAlpha;
     Rectangle headFrame = new Rectangle(0, 0, 36, 42);
+    private List<int> PlayersFighting = new List<int>();
     public void FacePlayer()
     {
         Player player = Main.player[NPC.target];
@@ -574,7 +575,7 @@ public class ArchmageX : CommonNPC
                 float dist = _pla.Distance(GetArenaRect().Center());
                 if (dist < 1400)
                 {
-                    if (dist > 550)
+                    if (dist > 550 && PlayersFighting.Contains(_pla.whoAmI))
                     {
                         MPUtils.NewProjectile(null, _pla.Center, Vector2.Zero, ProjectileType<XExplosion>(), 0, 0);
                         MPUtils.NewProjectile(null, GetArenaRect().Center(), Vector2.Zero, ProjectileType<XExplosion>(),
@@ -593,8 +594,11 @@ public class ArchmageX : CommonNPC
 
                         Helper.TPNoDust(GetArenaRect().Center(), _pla);
                     }
-                    else
+                    else if (dist <= 550)
                     {
+                        if (!PlayersFighting.Contains(_pla.whoAmI))
+                            PlayersFighting.Add(_pla.whoAmI);
+                        
                         while (_pla.Center.X < GetArenaRect().X)
                             _pla.Center += Vector2.UnitX * 2;
 

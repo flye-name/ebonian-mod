@@ -1,4 +1,5 @@
-﻿using EbonianMod.Content.Projectiles.ArchmageX;
+﻿using System.Collections.Generic;
+using EbonianMod.Content.Projectiles.ArchmageX;
 using EbonianMod.Content.Projectiles.VFXProjectiles;
 using EbonianMod.Core.Systems.Boss;
 using EbonianMod.Core.Systems.Cinematic;
@@ -68,32 +69,40 @@ public class ArchmageXSpawnAnim : ModProjectile
         return false;
     }
     float glareAlpha;
+    private List<int> PlayersFighting = new List<int>();
     public override void AI()
     {
         if (Projectile.timeLeft > 20)
             glareAlpha = MathHelper.SmoothStep(0, 1, Utils.GetLerpValue(400, 0, Projectile.timeLeft));
         else
             glareAlpha = MathHelper.Lerp(glareAlpha, 0, 0.05f);
-        Player player = Main.LocalPlayer;
-        if (GetArenaRect().Size().Length() > 100)
+
+        foreach (Player player in Main.ActivePlayers)
         {
-            if (player.Distance(GetArenaRect().Center()) > 1200)
+            if (GetArenaRect().Size().Length() > 100)
             {
-                Helper.TPNoDust(GetArenaRect().Center(), player);
-            }
-            else
-            {
-                while (player.Center.X < GetArenaRect().X)
-                    player.Center += Vector2.UnitX * 2;
+                float dist = player.Distance(GetArenaRect().Center());
+                if (dist > 1200 && PlayersFighting.Contains(player.whoAmI))
+                {
+                    Helper.TPNoDust(GetArenaRect().Center(), player);
+                }
+                else if (dist <= 550) 
+                {
+                    if (!PlayersFighting.Contains(player.whoAmI))
+                        PlayersFighting.Add(player.whoAmI);
 
-                while (player.Center.X > GetArenaRect().X + GetArenaRect().Width)
-                    player.Center -= Vector2.UnitX * 2;
+                    while (player.Center.X < GetArenaRect().X)
+                        player.Center += Vector2.UnitX * 2;
 
-                while (player.Center.Y < GetArenaRect().Y)
-                    player.Center += Vector2.UnitY * 2;
+                    while (player.Center.X > GetArenaRect().X + GetArenaRect().Width)
+                        player.Center -= Vector2.UnitX * 2;
+
+                    while (player.Center.Y < GetArenaRect().Y)
+                        player.Center += Vector2.UnitY * 2;
+                }
             }
         }
-
+        
         Projectile.scale = MathHelper.Lerp(Projectile.scale, 4, 0.01f);
         int fac = 12;
         if (Projectile.timeLeft < 140)

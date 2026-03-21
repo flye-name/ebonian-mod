@@ -28,7 +28,8 @@ v3.0
 
 ## Changes to Bosses:
 - Reworked Hot Garbage
-- Xareus no longer despawns your summons when sheepened, instead, player projectiles no longer deal damage while sheepened. 
+- Xareus no longer despawns your summons when sheepened, instead, player projectiles no longer deal damage while sheepened
+- Xareus no longer teleports players outside of the arena into it if they never participated in the fight to begin with 
 
 ## Changes to Enemies:
 - Updated the Hookworm's coin drops, bestiary, and added a chance for it to drop a Whoopie Cushion

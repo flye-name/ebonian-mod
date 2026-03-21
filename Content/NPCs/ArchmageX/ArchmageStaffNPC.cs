@@ -6,6 +6,7 @@ using EbonianMod.Content.Tiles;
 using EbonianMod.Core.Systems.Boss;
 using EbonianMod.Core.Systems.Cinematic;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Terraria.GameContent.Bestiary;
 using Terraria.Graphics.CameraModifiers;
@@ -116,6 +117,7 @@ public class ArchmageStaffNPC : ModNPC
     FloatingDialogueBox d = null;
     float rantFactor = 0;
     bool initiatedMartianCutscene;
+    private List<int> PlayersFighting = new List<int>();
     public override void AI()
     {
         NPC.TargetClosest(false);
@@ -244,20 +246,30 @@ public class ArchmageStaffNPC : ModNPC
                     {
                         if (GetArenaRect().Size().Length() > 100)
                         {
-                            if (Main.player[NPC.target].Distance(GetArenaRect().Center()) is > 1200 and < 2500)
+                            foreach (Player player in Main.ActivePlayers)
                             {
-                                Helper.TPNoDust(GetArenaRect().Center(), Main.player[NPC.target]);
-                            }
-                            else
-                            {
-                                while (Main.player[NPC.target].Center.X < GetArenaRect().X)
-                                    Main.player[NPC.target].Center += Vector2.UnitX * 2;
+                                if (GetArenaRect().Size().Length() > 100)
+                                {
+                                    float distance = player.Distance(GetArenaRect().Center());
+                                    if (distance > 1200 && PlayersFighting.Contains(player.whoAmI))
+                                    {
+                                        Helper.TPNoDust(GetArenaRect().Center(), player);
+                                    }
+                                    else if (distance <= 550) 
+                                    {
+                                        if (!PlayersFighting.Contains(player.whoAmI))
+                                            PlayersFighting.Add(player.whoAmI);
 
-                                while (Main.player[NPC.target].Center.X > GetArenaRect().X + GetArenaRect().Width)
-                                    Main.player[NPC.target].Center -= Vector2.UnitX * 2;
+                                        while (player.Center.X < GetArenaRect().X)
+                                            player.Center += Vector2.UnitX * 2;
 
-                                while (Main.player[NPC.target].Center.Y < GetArenaRect().Y)
-                                    Main.player[NPC.target].Center += Vector2.UnitY * 2;
+                                        while (player.Center.X > GetArenaRect().X + GetArenaRect().Width)
+                                            player.Center -= Vector2.UnitX * 2;
+
+                                        while (player.Center.Y < GetArenaRect().Y)
+                                            player.Center += Vector2.UnitY * 2;
+                                    }
+                                }
                             }
                         }
                     }
