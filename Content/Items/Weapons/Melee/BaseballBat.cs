@@ -28,7 +28,7 @@ public class BaseballBat : ModItem
     }
     public override void AddRecipes()
     {
-        CreateRecipe().AddIngredient(ItemID.SandBlock, 10).AddIngredient(ItemID.Silk, 10).AddIngredient(RecipeGroupID.IronBar, 20).AddTile(TileID.Anvils).Register();
+        CreateRecipe().AddIngredient(ItemID.SandBlock, 10).AddIngredient(ItemID.Silk, 10).AddRecipeGroup(RecipeGroupID.IronBar, 20).AddTile(TileID.Anvils).Register();
     }
     public override bool AltFunctionUse(Player player) => true;
     public override bool CanUseItem(Player player)
