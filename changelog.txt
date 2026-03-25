@@ -29,6 +29,7 @@ v3.0
 - The Juvenile Brain no longer drops the Defibrillator, it instead drops the Bloodsoaked Dentures
 - Removed the Bloodsoaked Dentures' recipe
 - Changed the Defibrillator's recipe
+- The Rusty Waraxe bleed effect now applies on critical hits instead of a set chance 
 - Adjusted the amount of materials used in certain recipes 
 - Seeping Brain and Rotten Heart no longer lower enemy spawns
 
