@@ -74,4 +74,5 @@ v3.0
 - Fixed Rolypoly using incorrect gore sprites
 - Fixed the Cold Touch not climbing slopes
 - Fixed the Naked Sheep item spawning normal sheep and being useable from any range
+- Fixed the Baseball Bat recipe
 - Fix some incorrect tooltips
