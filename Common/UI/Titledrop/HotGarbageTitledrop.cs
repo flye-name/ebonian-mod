@@ -6,7 +6,7 @@ namespace EbonianMod.Common.UI.Titledrop;
 
 public class HotGarbageTitledrop : TitledropStyle, ILoadable
 {
-	public HotGarbageTitledrop Instance;
+	public static HotGarbageTitledrop Instance;
 
 	public void Load(Mod mod)
 	{
