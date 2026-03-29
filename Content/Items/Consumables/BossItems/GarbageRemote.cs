@@ -4,6 +4,7 @@ using EbonianMod.Content.Projectiles.VFXProjectiles;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using EbonianMod.Content.NPCs.Garbage.Projectiles;
 using Terraria.Graphics.CameraModifiers;
 
 
@@ -90,15 +91,7 @@ public class GarbageRemoteP : ModProjectile
     }
     public override void OnKill(int timeLeft)
     {
-        Player player = Main.player[Projectile.owner];
         Helper.AddCameraModifier(new PunchCameraModifier(Projectile.Center, Main.rand.NextVector2Unit(), 10, 6, 30, 1000));
-        Projectile a = Projectile.NewProjectileDirect(Projectile.InheritSource(Projectile), Projectile.Center, Vector2.Zero, ProjectileID.DaybreakExplosion, 50, 0);
-        if (a is not null)
-        {
-            a.hostile = true;
-            a.friendly = false;
-            MPUtils.SyncProjectile(a);
-        }
     }
     List<Vector2> points = new List<Vector2>();
     Vector2 end;
@@ -152,7 +145,6 @@ public class GarbageRemoteP : ModProjectile
             MPUtils.NewProjectile(null, Projectile.Center, Vector2.Zero, ProjectileType<YellowShockwave>(), 0, 0);
         }
         int n = 15;
-        Vector2 start = Projectile.Center;
         if (Projectile.timeLeft == 120)
         {
             if (Projectile.owner == Main.myPlayer)
@@ -162,19 +154,8 @@ public class GarbageRemoteP : ModProjectile
         {
             Helper.AddCameraModifier(new PunchCameraModifier(Projectile.Center, Main.rand.NextVector2Unit(), 5, 6, 30, 1000));
             MPUtils.NewProjectile(null, Projectile.Center, Vector2.Zero, ProjectileType<BigGrayShockwave>(), 0, 0);
-            end = Projectile.Center + new Vector2(0, -Main.screenHeight);
-            Vector2 dir = (end - start).RotatedBy(MathHelper.PiOver2);
-            dir.Normalize();
-            float x = Main.rand.NextFloat(30, 40);
-            for (int i = 0; i < n; i++)
-            {
-                if (i == n - 1)
-                    x = 0;
-                Vector2 point = Vector2.SmoothStep(start, end, i / (float)n) + dir * Main.rand.NextFloat(-x, x).SafeDivision(); //x being maximum magnitude
-                points.Add(point);
-                x -= i / (float)n;
-            }
-            SoundEngine.PlaySound(SoundID.Item72, player.Center);
+            MPUtils.NewProjectile(null, Projectile.Center - new Vector2(0, 700), Vector2.UnitY, ProjectileType<GarbageLightning>(), 15, 0);
+
         }
         if (Projectile.timeLeft <= 155)
             if (Main.rand.NextBool(5))
@@ -182,93 +163,10 @@ public class GarbageRemoteP : ModProjectile
         if (Projectile.timeLeft <= 155 && Projectile.timeLeft > 125)
         {
             Projectile.ai[2] = MathHelper.Lerp(Projectile.ai[2], 1, 0.1f);
-            if (points.Count > 2)
-            {
-
-                Vector2 dirr = (end - start).RotatedBy(MathHelper.PiOver2);
-                dirr.Normalize();
-                for (int i = 0; i < points.Count; i++)
-                {
-                    points[i] = Vector2.SmoothStep(points[i], Vector2.SmoothStep(start, end, i / (float)n), 0.35f);
-                }
-                Projectile.ai[0]++;
-
-                if (Projectile.ai[0] % 2 == 0)
-                {
-                    SoundStyle s = SoundID.DD2_LightningAuraZap;
-                    s.Volume = 0.5f;
-                    SoundEngine.PlaySound(s, player.Center);
-                    points.Clear();
-                    //Vector2 start = Projectile.Center + Helper.FromAToB(player.Center, Main.MouseWorld) * 40;
-                    Vector2 dir = (end - start).RotatedBy(MathHelper.PiOver2);
-                    dir.Normalize();
-                    float x = Main.rand.NextFloat(30, 40) - Projectile.damage;
-                    for (int i = 0; i < n; i++)
-                    {
-                        if (i == n - 1)
-                            x = 0;
-                        float a = Main.rand.NextFloat(-x, x).SafeDivision();
-                        if (i < 3)
-                            a = 0;
-                        Vector2 point = Vector2.SmoothStep(start, end, i / (float)n) + dir * a; //x being maximum magnitude
-                        points.Add(point);
-                        x -= i / (float)n;
-                    }
-                }
-
-
-                points[0] = start;
-                points[points.Count - 1] = end;
-            }
         }
     }
     public override bool PreDraw(ref Color lightColor)
     {
-
-        float mult = 0.55f + (float)Math.Sin(Main.GlobalTimeWrappedHourly/* * 2*/) * 0.1f;
-        float scale = Projectile.scale * 2;
-        Texture2D bolt = Assets.Extras.laser2.Value;
-        Main.spriteBatch.Reload(BlendState.Additive);
-        Main.spriteBatch.Reload(SpriteSortMode.Immediate);
-        float s = 1;
-        if (points.Count > 2 && Projectile.timeLeft <= 155 && Projectile.timeLeft > 125)
-        {
-            VertexPositionColorTexture[] vertices = new VertexPositionColorTexture[(points.Count - 1) * 6];
-            for (int i = 0; i < points.Count - 1; i++)
-            {
-                Vector2 start = points[i];
-                Vector2 end = points[i + 1];
-                float dist = Vector2.Distance(points[i], points[i + 1]);
-                Vector2 vector = (end - start) / dist;
-                Vector2 vector2 = start;
-                float rotation = vector.ToRotation();
-
-                Color color = Color.Orange * s;
-
-                Vector2 pos1 = points[i] - Main.screenPosition;
-                Vector2 pos2 = points[i + 1] - Main.screenPosition;
-                Vector2 dir1 = Helper.GetRotation(points, i) * 10 * scale * s;
-                Vector2 dir2 = Helper.GetRotation(points, i + 1) * 10 * scale * (s + i / (float)points.Count * 0.03f);
-                Vector2 v1 = pos1 + dir1;
-                Vector2 v2 = pos1 - dir1;
-                Vector2 v3 = pos2 + dir2;
-                Vector2 v4 = pos2 - dir2;
-                float p1 = i / (float)points.Count;
-                float p2 = (i + 1) / (float)points.Count;
-                vertices[i * 6] = Helper.AsVertex(v1, color, new Vector2(p1, 0));
-                vertices[i * 6 + 1] = Helper.AsVertex(v3, color, new Vector2(p2, 0));
-                vertices[i * 6 + 2] = Helper.AsVertex(v4, color, new Vector2(p2, 1));
-
-                vertices[i * 6 + 3] = Helper.AsVertex(v4, color, new Vector2(p2, 1));
-                vertices[i * 6 + 4] = Helper.AsVertex(v2, color, new Vector2(p1, 1));
-                vertices[i * 6 + 5] = Helper.AsVertex(v1, color, new Vector2(p1, 0));
-
-                s -= i / (float)points.Count * 0.03f;
-            }
-            Helper.DrawTexturedPrimitives(vertices, PrimitiveType.TriangleList, bolt, true);
-        }
-        Main.spriteBatch.Reload(SpriteSortMode.Deferred);
-        Main.spriteBatch.Reload(BlendState.AlphaBlend);
         return true;
     }
 }

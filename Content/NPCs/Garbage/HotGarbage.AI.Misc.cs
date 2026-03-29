@@ -1,4 +1,5 @@
 using System;
+using EbonianMod.Common.UI.Titledrop;
 using EbonianMod.Content.Dusts;
 using EbonianMod.Content.NPCs.Garbage.Projectiles;
 using EbonianMod.Content.Projectiles.VFXProjectiles;
@@ -252,6 +253,7 @@ public partial class HotGarbage : ModNPC
                     player.JumpMovement();
                     player.velocity.Y = -10;
                 }
+            TitledropSystem.SetStyle(new HotGarbageTitledrop());
             MPUtils.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + NPC.height * 0.5f * Vector2.UnitY, new Vector2(0, 0), ProjectileType<GarbageImpact>(), 0, 0, 0, 0);
             CameraSystem.ChangeCameraPos(NPC.Center - new Vector2(0, 50), 150, null, 1.5f, InOutQuart);
         }
