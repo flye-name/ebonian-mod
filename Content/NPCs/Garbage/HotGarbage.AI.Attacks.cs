@@ -708,4 +708,9 @@ public partial class HotGarbage : ModNPC
 	    if (AITimer > 230) 
 		    ResetTo(State.WarningForDash);
     }
+
+    void DoReticleMissiles()
+    {
+	    
+    }
 }

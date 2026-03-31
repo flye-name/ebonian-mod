@@ -85,6 +85,10 @@ public partial class HotGarbage : ModNPC
             case State.SummonDrones:
                 DoSummonDrones();
                 break;
+            
+            case State.ReticleMissiles:
+                DoReticleMissiles();
+                break;
         }
     }
 }

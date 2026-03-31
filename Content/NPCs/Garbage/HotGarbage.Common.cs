@@ -52,6 +52,7 @@ public partial class HotGarbage : ModNPC
         MailBoxes,
         GiantFireball,
         SummonDrones,
+        ReticleMissiles
     }
 
     public enum AnimationStyles
