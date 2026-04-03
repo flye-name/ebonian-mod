@@ -706,11 +706,23 @@ public partial class HotGarbage : ModNPC
 	    }
 	    
 	    if (AITimer > 230) 
-		    ResetTo(State.WarningForDash);
+		    ResetTo(State.OpenLid, State.ReticleMissiles);
     }
 
     void DoReticleMissiles()
     {
+	    AnimationStyle = AnimationStyles.Open;
+	    AITimer++;
 	    
+	    if (AITimer <= 60 && AITimer % 5 == 0)
+	    {
+		    Vector2 pos = player.Center + Main.rand.NextVector2Circular(600, 100);
+		    
+		    SoundEngine.PlaySound(SoundID.DD2_FlameburstTowerShot, NPC.Center);
+		    MPUtils.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, new Vector2(Main.rand.NextFloat(-2.5f, 2.5f), Main.rand.NextFloat(-15, -7)) * 0.5f, ProjectileType<GarbageReticleMissile>(), 15, 0, ai0: pos.X, ai1: pos.Y, ai2: (AITimer == 55 ? -2 : 1));
+	    }
+
+	    if (AITimer > 300)
+		    ResetTo(State.WarningForDash, null, true);
     }
 }

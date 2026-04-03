@@ -18,7 +18,8 @@ public partial class HotGarbage : ModNPC
 
     public override void AI()
     {
-        NextAttack = State.SummonDrones;
+        NextAttack = State.OpenLid;
+        NextAttack2 = State.ReticleMissiles;
         
         AmbientFX();
 

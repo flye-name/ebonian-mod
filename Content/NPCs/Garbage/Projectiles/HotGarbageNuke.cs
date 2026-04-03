@@ -65,14 +65,13 @@ public class HotGarbageNuke : ModProjectile
             vertices.Add(Helper.AsVertex(Projectile.oldPos[i] + Projectile.Size / 2 + new Vector2(-14, 0).RotatedBy(Projectile.velocity.ToRotation()) + new Vector2(SmoothStep(20, 0, mult), 0).RotatedBy(rot + PiOver2) - Main.screenPosition, c, new Vector2(_off, 1)));
             vertices.Add(Helper.AsVertex(Projectile.oldPos[i] + Projectile.Size / 2 + new Vector2(-14, 0).RotatedBy(Projectile.velocity.ToRotation()) + new Vector2(SmoothStep(20, 0, mult), 0).RotatedBy(rot - PiOver2) - Main.screenPosition, c, new Vector2(_off, 0)));
         }
-        SpritebatchParameters sbParams = Main.spriteBatch.Snapshot();
-        Main.spriteBatch.End();
+        Main.spriteBatch.End(out var ss);
         Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.PointWrap, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
         if (vertices.Count > 2)
         {
             Helper.DrawTexturedPrimitives(vertices.ToArray(), PrimitiveType.TriangleStrip, Assets.Extras.wavyLaser2.Value, false);
         }
-        Main.spriteBatch.ApplySaved(sbParams);
+        Main.spriteBatch.ApplySaved(ss);
         Texture2D pulse = Assets.Extras.PulseCircle2.Value;
         Texture2D ring = Assets.Extras.crosslight.Value;
         Texture2D ring2 = Assets.Extras.Extras2.slash_06.Value;
@@ -155,7 +154,7 @@ public class HotGarbageNuke : ModProjectile
 
         Main.spriteBatch.Reload(BlendState.AlphaBlend);
 
-        sbParams = Main.spriteBatch.Snapshot();
+        ss = Main.spriteBatch.Snapshot();
 
 
         Main.spriteBatch.End();
@@ -238,7 +237,7 @@ public class HotGarbageNuke : ModProjectile
         DynamicSpriteFontExtensionMethods.DrawString(Main.spriteBatch, FontAssets.DeathText.Value, number.ToString(), Main.ScreenSize.ToVector2() / 2 - new Vector2(0, 100 + numberScaleOff * 30) + Main.rand.NextVector2Circular(30, 30) * numberAlpha - new Vector2(FontAssets.DeathText.Value.MeasureString((number).ToString()).X / 2 * (15 / 4 + numberScaleOff), FontAssets.DeathText.Value.MeasureString((number).ToString()).Y / 2 * (10 / 4 + numberScaleOff)), Color.Red * numberAlpha, 0, new Vector2(0.5f), 15 / 4 + numberScaleOff, SpriteEffects.None, 0);
 
 
-        Main.spriteBatch.ApplySaved(sbParams);
+        Main.spriteBatch.ApplySaved(ss);
         Main.EntitySpriteDraw(TextureAssets.Projectile[Type].Value, Projectile.Center - Main.screenPosition, null, Color.White * alpha, Projectile.rotation, Projectile.Size / 2, Projectile.scale, SpriteEffects.None);
 
         return false;
