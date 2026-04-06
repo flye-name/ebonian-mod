@@ -723,7 +723,7 @@ public partial class HotGarbage : ModNPC
 	    
 	    if (AITimer <= 60 && AITimer % 5 == 0)
 	    {
-		    Vector2 pos = player.Center + Main.rand.NextVector2Circular( 200, 200);
+		    Vector2 pos = player.Center + Main.rand.NextVector2Circular(200, 200);
 		    
 		    SoundEngine.PlaySound(SoundID.DD2_FlameburstTowerShot, NPC.Center);
 		    MPUtils.NewProjectile(NPC.GetSource_FromThis(), NPC.Top, new Vector2(Main.rand.NextFloat(-2.5f, 2.5f), Main.rand.NextFloat(-15, -7)) * 0.5f, ProjectileType<GarbageReticleMissile>(), 15, 0, ai0: pos.X, ai1: pos.Y, ai2: (AITimer == 55 ? -2 : 1));
