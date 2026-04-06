@@ -87,7 +87,7 @@ public class GarbageReticleMissile : ModProjectile
 
 			UnifiedRandom rand = new UnifiedRandom(Projectile.identity);
 			float progress = MathF.Sin(Utils.GetLerpValue(80, 200, Projectile.ai[2], true) * MathF.PI);
-			Projectile.ai[0] += rand.NextFloat(-30, 30) * progress;
+			Projectile.ai[0] += rand.NextFloat(-15, 15) * progress;
 			Projectile.ai[1] += rand.NextFloat(-1, 1) * progress * rand.NextBool().ToInt();
 		}
 

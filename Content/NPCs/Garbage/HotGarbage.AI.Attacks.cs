@@ -677,6 +677,7 @@ public partial class HotGarbage : ModNPC
     
     void DoSummonDrones()
     {
+	    FacePlayer();
 	    AnimationStyle = AnimationStyles.Idle;
 
 	    if (AITimer < 45)
@@ -685,16 +686,12 @@ public partial class HotGarbage : ModNPC
 	    AITimer++;
 	    if (AITimer == 10)
 	    {
-		    if (MPUtils.NotMPClient)
-				AITimer2 = Main.rand.Next([1, -1]);
 		    SoundEngine.PlaySound(SoundID.Zombie67.WithPitchOffset(-1f), NPC.Center);
-		    
-		    NPC.netUpdate = true;
 	    }
 
 	    if (AITimer > 10 && AITimer < 30 && AITimer % 2 == 0) 
 	    {
-		    MPUtils.NewProjectile(null, NPC.Center + new Vector2(AITimer2 * (AITimer - 10) * -60 + AITimer2 * 200, -500), Vector2.UnitY.RotatedBy(-AITimer2), ProjectileType<GarbageTechTelegraph>(), 0, 0, ai1: 2);
+		    MPUtils.NewProjectile(null, NPC.Center + new Vector2(NPC.direction * (AITimer - 10) * -60 + NPC.direction * 200, -500), Vector2.UnitY.RotatedBy(-NPC.direction), ProjectileType<GarbageTechTelegraph>(), 0, 0, ai1: 2);
 
 		    float rotation = Main.rand.NextFloat(-0.5f, 0.5f);
 		    MPUtils.NewProjectile(null, NPC.Center - new Vector2(0, 40).RotatedBy(rotation), -Vector2.UnitY.RotatedBy(rotation), ProjectileType<GarbageTechTelegraph>(), 0, 0, ai1: .5f);    
@@ -702,7 +699,7 @@ public partial class HotGarbage : ModNPC
 
 	    if (AITimer > 45 && AITimer < 180 && AITimer % 7 == 0)
 	    {
-		    MPUtils.NewProjectile(null, NPC.Center - new Vector2(850 * AITimer2, 600), new Vector2(7 * AITimer2, 10) * Main.rand.NextFloat(0.9f, 1.1f), ProjectileType<LaserDrone>(), 10, 0);
+		    MPUtils.NewProjectile(null, NPC.Center - new Vector2(850 * NPC.direction, 600), new Vector2(7 * NPC.direction, 10) * Main.rand.NextFloat(0.9f, 1.1f), ProjectileType<LaserDrone>(), 10, 0);
 	    }
 	    
 	    if (AITimer > 230) 
@@ -711,16 +708,51 @@ public partial class HotGarbage : ModNPC
 
     void DoReticleMissiles()
     {
-	    AnimationStyle = AnimationStyles.Open;
-	    AITimer++;
+	    if (AITimer < 60)
+			AnimationStyle = AnimationStyles.Open;
+	    else if (AITimer < 100)
+		    AnimationStyle = AnimationStyles.Close;
+	    else if (NPC.velocity.Length() < 1f && AITimer < 210)
+		    AnimationStyle = AnimationStyles.BoostWarning;
+	    else if (AITimer < 210)
+		    AnimationStyle = AnimationStyles.Boost;
+	    else 
+		    AnimationStyle = AnimationStyles.Idle;
+	    
+	    AITimer++; 
 	    
 	    if (AITimer <= 60 && AITimer % 5 == 0)
 	    {
-		    Vector2 pos = player.Center + Main.rand.NextVector2Circular(600, 100);
+		    Vector2 pos = player.Center + Main.rand.NextVector2Circular( 200, 200);
 		    
 		    SoundEngine.PlaySound(SoundID.DD2_FlameburstTowerShot, NPC.Center);
-		    MPUtils.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, new Vector2(Main.rand.NextFloat(-2.5f, 2.5f), Main.rand.NextFloat(-15, -7)) * 0.5f, ProjectileType<GarbageReticleMissile>(), 15, 0, ai0: pos.X, ai1: pos.Y, ai2: (AITimer == 55 ? -2 : 1));
+		    MPUtils.NewProjectile(NPC.GetSource_FromThis(), NPC.Top, new Vector2(Main.rand.NextFloat(-2.5f, 2.5f), Main.rand.NextFloat(-15, -7)) * 0.5f, ProjectileType<GarbageReticleMissile>(), 15, 0, ai0: pos.X, ai1: pos.Y, ai2: (AITimer == 55 ? -2 : 1));
 	    }
+
+	    if (AITimer > 100)
+	    {
+		    Phase();
+
+		    if (AITimer < 130)
+			    NPC.velocity.X -= NPC.direction * 0.1f;
+
+		    if (AITimer == 152)
+		    {
+			    SoundEngine.PlaySound(Sounds.exolDash, NPC.Center);
+			    NPC.velocity.X = 0;
+		    }
+
+		    if (AITimer is > 152 and < 162)
+			    NPC.velocity += new Vector2(NPC.direction * MathHelper.Lerp(0.5f, 2, (AITimer - 152) / 10f), 0);
+		    if (AITimer > 210)
+			    NPC.velocity.X *= 0.9f;
+		    
+		    if (NPC.velocity.Length() > 4f)
+				MPUtils.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ProjectileType<GarbageDashFlames>(), 15, 0, ai2: 2);
+	    }
+	    
+	    if (AITimer is < 100 or > 240)
+		    FacePlayer();
 
 	    if (AITimer > 300)
 		    ResetTo(State.WarningForDash, null, true);
