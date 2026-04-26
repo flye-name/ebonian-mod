@@ -257,8 +257,6 @@ public class HotGarbageNuke : ModProjectile
     {
         MusicSystem.TemporarilySetMusicTo0(600);
         GetInstance<DownedBossSystem>().downedGarbage = true;
-        SoundEngine.PlaySound(Sounds.nuke);
-        SoundEngine.PlaySound(Sounds.garbageDeath);
         foreach (Player player in Main.ActivePlayers)
         {
             if (player.Center.Distance(targetPos) < 4500 / 2 - 200)
@@ -365,6 +363,9 @@ public class HotGarbageNuke : ModProjectile
             for (int i = 0; i < Projectile.oldPos.Length; i++)
                 Projectile.oldPos[i] = Projectile.position;
 
+        if ((int)Projectile.ai[1] == 120)
+            SoundEngine.PlaySound(Sounds.garbageNuke);
+        
         if (Projectile.ai[1] > 0 && Projectile.ai[0] > 50)
             Projectile.ai[1]--;
         if (Projectile.ai[1] <= 0 && Projectile.ai[0] > 50)

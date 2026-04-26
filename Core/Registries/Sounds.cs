@@ -284,11 +284,6 @@ public class Sounds : ModSystem
         IsLooped = true
     };
 
-    public static SoundStyle nuke => Default with
-    {
-        SoundPath = path + "Nuke"
-    };
-
 
     public static SoundStyle reiFail => Default with
     {
@@ -364,7 +359,36 @@ public class Sounds : ModSystem
 
     public static SoundStyle garbageLaser => Default with
     {
-        SoundPath = path + "HotGarbage/garbageLaser",
+        SoundPath = path + "HotGarbage/GarbageLaserLoop",
+        PitchVariance = 0,
+        IsLooped = true
+    };
+
+
+    public static SoundStyle garbageLaserFire => Default with
+    {
+        SoundPath = path + "HotGarbage/GarbageLaserFire",
+        PitchVariance = 0
+    };
+
+
+    public static SoundStyle garbageNukeArm => Default with
+    {
+        SoundPath = path + "HotGarbage/GarbageNukeArm",
+        PitchVariance = 0
+    };
+
+
+    public static SoundStyle garbageNuke => Default with
+    {
+        SoundPath = path + "HotGarbage/GarbageNuke",
+        PitchVariance = 0
+    };
+
+
+    public static SoundStyle garbageJetBlast => Default with
+    {
+        SoundPath = path + "HotGarbage/GarbageJetBlast",
         PitchVariance = 0
     };
 
@@ -525,13 +549,6 @@ public class Sounds : ModSystem
         SoundPath = path + "ghizasWheel",
         IsLooped = true,
         PitchVariance = 0f
-    };
-
-
-    public static SoundStyle garbageDeath => Default with
-    {
-        SoundPath = path + "NPCHit/garbageDeath",
-        PitchVariance = 0
     };
 
 
