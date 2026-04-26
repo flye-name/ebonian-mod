@@ -241,8 +241,8 @@ CorruptionStaff: {
 }
 
 CrimsonSpear: {
-	DisplayName: Vitriolic Voulge
-	Tooltip: Gets more powerful with extended use
+	DisplayName: Vicious Voulge
+	Tooltip: Inflicts Ichor on hit
 }
 
 Spinax: {

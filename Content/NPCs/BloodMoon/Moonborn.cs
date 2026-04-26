@@ -165,6 +165,7 @@ public class Moonborn : ModNPC
                 SpriteEffects flip = j == 1 ? SpriteEffects.None : SpriteEffects.FlipVertically;
                 spriteBatch.Draw(Assets.NPCs.BloodMoon.MoonbornLegSegment1.Value, NPC.Center - screenPos + NPC.GFX(), null, NPC.HunterPotionColor(drawColor), (jointPosition - NPC.Center).ToRotation(), new Vector2(0, 8), NPC.scale, flip, 0);
                 spriteBatch.Draw(Assets.NPCs.BloodMoon.MoonbornLegSegment2.Value, jointPosition - screenPos + NPC.GFX(), null, NPC.HunterPotionColor(drawColor), (Legs[i].Position - jointPosition).ToRotation(), new Vector2(7, 10), NPC.scale, flip, 0);
+
                 Utils.DrawLine(spriteBatch, Legs[i].RawPosition, NPC.Center + Legs[i].ReferenceOffset * new Vector2(MovementDirection.X * j, 1), Color.Red);
             }
         }

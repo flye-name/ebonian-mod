@@ -7,7 +7,7 @@ namespace EbonianMod.Content.NPCs.Snow;
 
 public class BorealDancer : ModNPC
 {
-    public override string Texture => Helper.AssetPath + "NPCs/Snow/"+Name;
+    public override string Texture => Helper.AssetPath + "NPCs/Snow/" + Name;
     public override void SetDefaults()
     {
         NPC.width = 20;

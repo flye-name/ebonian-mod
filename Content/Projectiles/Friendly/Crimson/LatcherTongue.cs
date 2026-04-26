@@ -3,131 +3,180 @@ using EbonianMod.Content.Projectiles.Cecitior;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using Terraria.ModLoader.IO;
 
 namespace EbonianMod.Content.Projectiles.Friendly.Crimson;
 
 public class LatcherTongue : ModProjectile
 {
-    bool IsAttached;
-    Vector2 PositionOffset, NeckOrigin;
-    float Speed;
-    int TargetIndex = -1;
     public override string Texture => Helper.Empty;
+
     public override void SetStaticDefaults()
     {
         ProjectileID.Sets.DrawScreenCheckFluff[Type] = 3000;
     }
+
     public override void SetDefaults()
-    { 
-        Projectile.width = 32;
-        Projectile.height = 32;
-        Projectile.aiStyle = -1;
-        Projectile.friendly = true;
-        Projectile.tileCollide = true;
+    {
+        Projectile.Size = new Vector2(32);
         Projectile.DamageType = DamageClass.Magic;
-        Projectile.hostile = false;
         Projectile.penetrate = -1;
         Projectile.timeLeft = 200;
+        Projectile.tileCollide = true;
+        Projectile.friendly = true;
+        Projectile.hostile = false;
         Projectile.hide = true;
+        Projectile.aiStyle = -1;
     }
-    public override void SendExtraAI(BinaryWriter writer)
+
+    bool _isAttached;
+    Vector2 _positionOffset;
+    float _speed;
+    int _targetIndex = -1;
+
+    Vector2 _neckOrigin
     {
-        writer.Write(IsAttached);
-        writer.WriteVector2(PositionOffset);
-        writer.Write(TargetIndex);
+        get => new Vector2(Projectile.ai[0], Projectile.ai[1]);
     }
-    public override void ReceiveExtraAI(BinaryReader reader)
+
+    public override bool? CanDamage() => !_isAttached && Projectile.ai[2] < 27;
+
+    public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
     {
-        IsAttached = reader.ReadBoolean();
-        PositionOffset = reader.ReadVector2();
-        TargetIndex = reader.ReadInt32();
+        modifiers.FinalDamage *= 0;
+        modifiers.Knockback *= 0;
     }
-    public override bool? CanDamage() => !IsAttached && Projectile.ai[2] < 27;
+
     public override void OnHitNPC(NPC target, NPC.HitInfo hitinfo, int damage)
     {
-        PositionOffset = Projectile.Center - target.Center;
-        Projectile.velocity = Vector2.Zero;
-        TargetIndex = target.whoAmI;
-        IsAttached = true;
-        Projectile.netUpdate = true; // TEST
+        if(_targetIndex == -1)
+        {
+            _positionOffset = Projectile.Center - target.Center;
+            _targetIndex = target.whoAmI;
+            _isAttached = true;
+
+            Projectile.velocity = Vector2.Zero;
+            Projectile.netUpdate = true;
+        }
     }
+
     public override void DrawBehind(int index, List<int> behindNPCsAndTiles, List<int> behindNPCs, List<int> behindProjectiles, List<int> overPlayers, List<int> overWiresUI)
     {
         behindProjectiles.Add(index);
     }
+
     public override void AI()
     {
         Player player = Main.player[Projectile.owner];
-        Projectile.rotation = Utils.AngleLerp(Projectile.rotation, (Main.MouseWorld - player.Center).ToRotation(), 0.02f);
-        NeckOrigin = new Vector2(Projectile.ai[0], Projectile.ai[1]);
 
-        if (IsAttached)
+        if (_isAttached)
         {
-            NPC Target = Main.npc[TargetIndex];
-            if (!Target.active || Target.life <= 0 || player.dead)
+            if (_targetIndex >= Main.npc.Length - 1)
+            {
                 Projectile.Kill();
+                return;
+            }
+
+            NPC target = Main.npc[_targetIndex];
+            if (!target.active || target.life <= 0 || player.DeadOrGhost)
+            {
+                Projectile.Kill();
+                return;
+            }
 
             Vector2 step = Projectile.Center - player.Center;
             if (Helper.Raycast(player.Center, step, step.Length()).Success || (player.whoAmI == Main.myPlayer && Main.mouseRight))
             {
-                player.velocity *= 0.7f;
-                IsAttached = false;
+                player.velocity *= 0.8f;
                 Projectile.tileCollide = false;
                 Projectile.timeLeft = 189;
+                _isAttached = false;
+
                 return;
             }
             Projectile.timeLeft = 190;
 
-            if(Speed < 30) Speed += 1.5f;
-            player.velocity = Helper.FromAToB(player.Center, Projectile.Center, true) * Speed;
-            player.SyncPlayerControls();
-            Projectile.Center = Target.Center + PositionOffset;
-            float velocityMagnitude = player.velocity.Length();
-            if (Vector2.Distance(player.Center, Projectile.Center) < Max(velocityMagnitude, 16))
+            if (_speed < 30)
             {
-                SoundEngine.PlaySound(Sounds.chomp2.WithPitchOffset(Main.rand.NextFloat(0.2f, 0.4f)), Projectile.Center);
+                _speed += 1.5f;
+            }
+            player.velocity = Helper.FromAToB(player.Center, Projectile.Center, true) * _speed;
+
+            Projectile.Center = target.Center + _positionOffset;
+            float playerSpeed = player.velocity.Length();
+            if (Vector2.Distance(player.Center, Projectile.Center) < Max(playerSpeed, 16))
+            {
+                player.velocity *= -0.35f;
+                player.immune = true;
+                player.immuneTime = 20;
+                target.SimpleStrikeNPC((int)(Projectile.damage * (playerSpeed / 30f) * (playerSpeed / 30f)), -(int)player.velocity.X, false, Projectile.knockBack * playerSpeed / 30f);
+
                 SoundEngine.PlaySound(Sounds.chomp1.WithPitchOffset(Main.rand.NextFloat(-0.6f, -0.2f)), Projectile.Center);
-                player.velocity *= -0.2f;
-                Target.SimpleStrikeNPC((int)MathF.Pow(velocityMagnitude / 3, 2), -(int)player.velocity.X, false, velocityMagnitude / 3);
+                SoundEngine.PlaySound(Sounds.chomp2.WithPitchOffset(Main.rand.NextFloat(0.2f, 0.4f)), Projectile.Center);
+
                 Projectile.Kill();
             }
         }
         else if (Projectile.timeLeft < 190)
         {
+            Projectile.Center += Helper.FromAToB(Projectile.Center, _neckOrigin) * Projectile.ai[2];
+            if (Projectile.ai[2] >= 30)
+            {
+                Projectile.tileCollide = false;
+            }
+            if (Vector2.Distance(Projectile.Center, _neckOrigin) < Projectile.ai[2])
+            {
+                Projectile.Kill();
+            }
             Projectile.ai[2] += 3;
-            Projectile.Center += Helper.FromAToB(Projectile.Center, NeckOrigin) * Projectile.ai[2];
-            if (Projectile.ai[2] >= 30) Projectile.tileCollide = false;
-            if (Vector2.Distance(Projectile.Center, NeckOrigin) < Projectile.ai[2]) Projectile.Kill();
         }
+
+        Projectile.netUpdate = true;
     }
+
     public override bool OnTileCollide(Vector2 oldVelocity)
     {
         Projectile.tileCollide = false;
         Projectile.timeLeft = 189;
         Projectile.ai[2] = 27;
+
+        Projectile.netUpdate = true;
+
         return false;
     }
+
     public override bool PreDraw(ref Color lightColor)
     {
-        if (NeckOrigin == Vector2.Zero) return false;
+        if (_neckOrigin == Vector2.Zero) return false;
 
-        Player player = Main.player[Projectile.owner];
-        Vector2 center = Projectile.Center;
-        Vector2 distanceToProjectile = NeckOrigin - Projectile.Center;
-        float projectileRotation = distanceToProjectile.ToRotation() - 1.57f;
-        float distance = distanceToProjectile.Length();
-        while (distance > 20 && !float.IsNaN(distance))
+        Texture2D texture = Assets.Projectiles.Friendly.Crimson.Latcher_Chain.Value;
+        Vector2 centerDifference = _neckOrigin - Projectile.Center;
+        float length = centerDifference.Length();
+        float angle = centerDifference.ToRotation();
+        centerDifference.Normalize();
+
+        for (float i = texture.Width / 2f; i < length; i += texture.Width)
         {
-            distanceToProjectile.Normalize();
-            distanceToProjectile *= 20;
-            center += distanceToProjectile;
-            distanceToProjectile = NeckOrigin - center;
-            distance = distanceToProjectile.Length();
-
-            Main.spriteBatch.Draw(Assets.Projectiles.Friendly.Crimson.Latcher_Chain.Value, center - Main.screenPosition,null, new Color(Lighting.GetSubLight(center)), projectileRotation, Assets.Projectiles.Friendly.Crimson.Latcher_Chain.Value.Size() / 2, 1f, SpriteEffects.None, 0);
+            Main.spriteBatch.Draw(texture, Projectile.Center + centerDifference * i - Main.screenPosition, null, lightColor, angle, texture.Size() / 2, 1, SpriteEffects.None, 0);
         }
-        Main.spriteBatch.Draw(Assets.Projectiles.Friendly.Crimson.Latcher_Chain.Value, Projectile.Center - Main.screenPosition, null, new Color(Lighting.GetSubLight(Projectile.Center)), projectileRotation, Assets.Projectiles.Friendly.Crimson.Latcher_Chain.Value.Size() / 2, 1f, SpriteEffects.None, 0);
+       
         return false;
+    }
+
+    public override void SendExtraAI(BinaryWriter writer)
+    {
+        writer.Write(Projectile.tileCollide);
+        writer.Write(_isAttached);
+        writer.Write(_targetIndex);
+        writer.WriteVector2(_positionOffset);
+    }
+
+    public override void ReceiveExtraAI(BinaryReader reader)
+    {
+        Projectile.tileCollide = reader.ReadBoolean();
+        _isAttached = reader.ReadBoolean();
+        _targetIndex = reader.ReadInt32();
+        _positionOffset = reader.ReadVector2();
     }
 }
 public class LatcherTongueCecitior : ModProjectile

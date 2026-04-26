@@ -6,45 +6,66 @@ namespace EbonianMod.Content.Items.Weapons.Melee;
 public class CrimsonSpear : ModItem
 {
     public override string Texture => Helper.AssetPath + "Items/Weapons/Melee/CrimsonSpear";
+
+    public override bool CanUseItem(Player player) => player.ownedProjectileCounts[Item.shoot] < 1;
+
+    public override void AddRecipes() => CreateRecipe().AddIngredient(ItemID.TheRottedFork).AddIngredient(ItemType<CecitiorMaterial>(), 20).AddTile(TileID.MythrilAnvil).Register();
+
+    public override void SetStaticDefaults()
+    {
+
+    }
+
     public override void SetDefaults()
     {
-        Item.knockBack = 10f;
-        Item.width = 48;
-        Item.height = 66;
-        Item.crit = 15;
-        Item.damage = 40;
-        Item.useAnimation = 32;
-        Item.useTime = 32;
-        Item.noUseGraphic = true;
-        Item.autoReuse = false;
-        Item.noMelee = true;
-        Item.channel = true;
-        Item.value = Item.buyPrice(0, 30, 0, 0);
-        //Item.reuseDelay = 45;
+        Item.Size = new(72);
+        Item.scale = 1f;
+
         Item.DamageType = DamageClass.Melee;
-        //Item.UseSound = SoundID.Item1;
-        Item.useStyle = ItemUseStyleID.Swing;
+        Item.noMelee = true;
+        Item.damage = 75;
+        Item.knockBack = 8f;
+
+        Item.shoot = ProjectileType<CrimsonSpearPro>();
+        Item.shootSpeed = 1;
+
+        Item.autoReuse = true;
+        Item.noUseGraphic = true;
+        Item.useTime = Item.useAnimation = 28;
+        Item.useStyle = ItemUseStyleID.Shoot;
+        Item.UseSound = new SoundStyle("EbonianMod/Assets/Sounds/Swing", 5)
+        {
+            PitchVariance = 0.1f,
+            MaxInstances = 5
+        };
+
+        Item.value = Item.buyPrice(0, 12, 0, 0);
         Item.rare = ItemRarityID.LightRed;
-        Item.shootSpeed = 1f;
-        Item.shoot = ProjectileType<CrimsonSpearP>();
     }
-    public override void AddRecipes()
-    {
-        CreateRecipe().AddIngredient(ItemID.TheRottedFork).AddIngredient(ItemType<CecitiorMaterial>(), 20).AddTile(TileID.MythrilAnvil).Register();
-    }
-    int dir = -1;
-    public override bool? CanAutoReuseItem(Player player)
-    {
-        return false;
-    }
+
     public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
     {
-        if (dir < 1)
-            dir++;
-        else
-            dir = -1;
+        var p = player.GetModPlayer<CrimsonSpearPlayer>();
 
-        Projectile.NewProjectile(source, position, velocity, type, damage, knockback, player.whoAmI, 0, dir);
+        Projectile.NewProjectileDirect(source, position, velocity, type, damage, knockback, player.whoAmI, p.Combo);
+
+        if (p.Combo++ >= 5)
+            p.Combo = 0;
+
         return false;
+    }
+}
+
+public class CrimsonSpearPlayer : ModPlayer
+{
+    public int Combo
+    {
+        get;
+        set;
+    }
+
+    public override void Initialize()
+    {
+        Combo = 0;
     }
 }
